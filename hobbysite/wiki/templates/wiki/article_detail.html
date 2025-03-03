@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <title>Task List</title>
+        <style>
+            table {
+                width: 55%;
+                padding-left: 4vw;
+                padding-top: 2.5vh;
+            }
+            td:first-child {
+                width: 14%;
+            }
+            td{
+                white-space: pre-line;
+            }
+            #title {
+                font-weight: bold;
+                font-size: 4rem;
+            }
+            #category{
+                font-size:1.5rem;
+            }
+            .gap-row{
+                height: 2vh;
+            }
+
+        </style>
+    </head>
+    <body>
+        <table>
+            <tbody> 
+                <tr><td id="category">{{article.category}}</td></tr>
+                <tr><td id="title" colspan="2">{{article.title}}</td></tr>
+                <tr><td>Published: </td><td>{{article.created_on}}</td></tr>
+                <tr><td>Last Updated:</td><td>{{article.updated_on}}</td></tr>
+                <tr class="gap-row"></tr>
+                <tr><td colspan="2">{{article.entry}}</td></tr>
+            </tbody>
+        </table>
+    </body>
+</html>
