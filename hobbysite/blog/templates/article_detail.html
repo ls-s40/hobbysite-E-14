@@ -3,21 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ article.title }}</title>
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 0.2em;
+        }
+        h2 {
+            font-size: 0.8em;
+            color: #444;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        h3 {
+            font-size: 0.8em;
+            color: #444;
+            border-top: 2px solid #ddd;
+            padding-top: 10px;
+        }
+        .entry {
+            line-height: 1.6;
+            margin: 20px 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
     <h1>{{ article.title }}</h1>
-    <p>
-        Category: {{ article.category.name }}
-    </p>
-    <p>
-        Created on: {{ article.created_on|date:"Y-m-d H:i" }}<br>
-        Updated on: {{ article.updated_on|date:"Y-m-d H:i" }}
-    </p>
-    <div>
+    <h2>
+        Category: {{ article.category.name }} <br>
+        Last updated: {{ article.updated_on|date:"Y-m-d H:i" }}
+    </h2>
+    <div class="entry">
         {{ article.entry|linebreaks }}
     </div>
+    <h3>
+        Created on: {{ article.created_on|date:"Y-m-d H:i" }}
+    </h3>
     <p>
-        <a href="{% url 'article_list' %}">Back to Article List</a>
+        <a href="{% url 'blog:article_list' %}">Back to Article List</a>
     </p>
+    </div>
 </body>
 </html>
