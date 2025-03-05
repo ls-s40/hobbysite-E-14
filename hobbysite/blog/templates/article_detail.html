@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ article.title }}</title>
+</head>
+<body>
+    <h1>{{ article.title }}</h1>
+    <p>
+        Category: {{ article.category.name }}
+    </p>
+    <p>
+        Created on: {{ article.created_on|date:"Y-m-d H:i" }}<br>
+        Updated on: {{ article.updated_on|date:"Y-m-d H:i" }}
+    </p>
+    <div>
+        {{ article.entry|linebreaks }}
+    </div>
+    <p>
+        <a href="{% url 'article_list' %}">Back to Article List</a>
+    </p>
+</body>
+</html>

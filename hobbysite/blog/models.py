@@ -7,10 +7,7 @@ class ArticleCategory(models.Model):
 
     def __str__(self):
         return self.name
-    
-    def get_absolute_url(self):
-        return reverse('article_list', args=[self.id])
-    
+
     class Meta:
         ordering = ['name']
 
