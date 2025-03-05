@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from .models import Commission
 
 def commissions_list(request):
-    commission = commission.objects.all()
+    commissions = Commission.objects.all()
     ctx = {
-        'commission': commission
+        'commissions': commissions
     }
     
     return render(request, 'commissions_list.html', ctx)

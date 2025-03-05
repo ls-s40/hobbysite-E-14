@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commissions</title>
+</head>
+<body>
+    <h1>Commissions</h1>
+    <ul>
+        {% for commission in commissions %}
+            <li>
+                <a href="{{ commission.get_absolute_url }}">{{ commission.title }}</a>
+                (Created: {{ commission.created_on }}, Updated: {{ commission.updated_on }})
+            </li>
+        {% empty %}
+            <li>No commissions available.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
