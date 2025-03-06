@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog Articles</title>
     <style>
         .container {
@@ -30,30 +31,33 @@
 </head>
 <body>
     <div class="container">
-    <h1>Blog Articles</h1>
-    {% for category in categories %}
-        <section>
-            <h2>{{ category.name }}</h2>
-            <div class="description">
-                {{ category.description }}
-            </div>
-            {% if category.articles.all %}
-                <ul>
-                    {% for article in category.articles.all %}
-                        <li>
-                            <a href="{% url 'blog:article_detail' article.id %}">{{ article.title }}</a>
-                            <small>(Created on: {{ article.created_on|date:"Y-m-d H:i" }})</small>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No articles in this category.</p>
-            {% endif %}
-        </section>
-    {% empty %}
-        <p>No categories available.</p>
-    {% endfor %}
+        <header>
+            <h1>Blog Articles</h1>
+        </header>
+        <main>
+            {% for category in categories %}
+                <section>
+                    <h2>{{ category.name }}</h2>
+                    <div class="description">
+                        {{ category.description }}
+                    </div>
+                    {% if category.articles.all %}
+                        <ul>
+                            {% for article in category.articles.all %}
+                                <li>
+                                    <a href="{% url 'blog:article_detail' article.id %}"> {{ article.title }}</a>
+                                    <small>(Created on: {{ article.created_on|date:"Y-m-d H:i" }})</small>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No articles in this category.</p>
+                    {% endif %}
+                </section>
+            {% empty %}
+                <p>No categories available.</p>
+            {% endfor %}
+        </main>
     </div>
 </body>
 </html>
-

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ article.title }}</title>
     <style>
         .container {
@@ -37,20 +38,26 @@
 </head>
 <body>
     <div class="container">
-    <h1>{{ article.title }}</h1>
-    <h2>
-        Category: {{ article.category.name }} <br>
-        Last updated: {{ article.updated_on|date:"Y-m-d H:i" }}
-    </h2>
-    <div class="entry">
-        {{ article.entry|linebreaks }}
-    </div>
-    <h3>
-        Created on: {{ article.created_on|date:"Y-m-d H:i" }}
-    </h3>
-    <p>
-        <a href="{% url 'blog:article_list' %}">Back to Article List</a>
-    </p>
+        <header>
+            <h1>{{ article.title }}</h1>
+            <h2>
+                Category: {{ article.category.name }} <br>
+                Last updated: {{ article.updated_on|date:"Y-m-d H:i" }}
+            </h2>
+        </header>
+        <main>
+            <div class="entry">
+                {{ article.entry|linebreaks }}
+            </div>
+            <h3>
+                Created on: {{ article.created_on|date:"Y-m-d H:i" }}
+            </h3>
+        </main>
+        <footer>
+            <p>
+                <a href="{% url 'blog:article_list' %}">Return to the list of articles</a>
+            </p>
+        </footer>
     </div>
 </body>
 </html>

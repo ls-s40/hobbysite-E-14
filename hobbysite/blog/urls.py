@@ -1,3 +1,4 @@
+"""This file contains the URL patterns for the blog app."""
 from django.urls import path
 from .views import article_list, article_detail
 
