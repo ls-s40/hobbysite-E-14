@@ -1,3 +1,5 @@
+"""This file manages the URLs for the merchstore app."""
+
 from django.urls import path
 from .views import ProductListView, ProductDetailView
 
