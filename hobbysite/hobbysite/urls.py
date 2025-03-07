@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('wiki/', include('wiki.urls', namespace="wiki")),
     path('forum/', include('forum.urls', namespace='forum')),
+    path('commissions/', include('commissions.urls', namespace="commissions"))
 ]
