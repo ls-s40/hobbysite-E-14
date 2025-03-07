@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
+    path('merchstore/', include('merchstore.urls', namespace="merchstore")),
     path('admin/', admin.site.urls),
     path('wiki/', include('wiki.urls', namespace="wiki")),
 ]
