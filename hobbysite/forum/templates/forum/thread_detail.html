@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>{{category}}</h1>
+
+    {% for post in posts %}
+
+    <table>
+        <thead>
+            <th colspan="2">{{post.title}}</th>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Created on: {{post.created_on}}</td>
+                <td>Last Updated: {{post.updated_on}}</td>
+            </tr>
+            <tr>
+                <td colspan="2">{{post.entry}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br>
+
+    {% endfor %}
+
+</body>
+
+</html>
