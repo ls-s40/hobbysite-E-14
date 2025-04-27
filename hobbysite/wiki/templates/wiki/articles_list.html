@@ -1,7 +1,8 @@
-<!DOCTYPE html>
-<html lang="en-US">
+{% extends 'base.html' %}
+
     <head>
         <title>Task List</title>
+        {% block styles %} 
         <style>
             table {
                 width: 100%;
@@ -25,8 +26,9 @@
                 width: 17%;
             }
         </style>
+        {% endblock %}
     </head>
-    <body>
+    {% block content %}
         <h1>Articles</h1>
         <table>
             <thead>
@@ -50,5 +52,4 @@
                 {% endfor %}
             </tbody>
         </table>
-    </body>
-</html>
+    {% endblock %}

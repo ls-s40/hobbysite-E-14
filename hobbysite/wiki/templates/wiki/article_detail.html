@@ -1,7 +1,8 @@
-<!DOCTYPE html>
-<html lang="en-US">
+{% extends 'base.html' %}
+
     <head>
         <title>Task List</title>
+        {% block styles %}
         <style>
             table {
                 width: 55%;
@@ -24,10 +25,10 @@
             .gap-row{
                 height: 2vh;
             }
-
         </style>
+        {% endblock %}
     </head>
-    <body>
+    {% block content %}
         <table>
             <tbody> 
                 <tr><td id="category">{{article.category}}</td></tr>
@@ -38,5 +39,4 @@
                 <tr><td colspan="2">{{article.entry}}</td></tr>
             </tbody>
         </table>
-    </body>
-</html>
+    {% endblock %}

@@ -1,9 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ article.title }}</title>
+    {% block styles %}
     <style>
         .container {
             max-width: 1200px;
@@ -35,8 +36,9 @@
             overflow-wrap: break-word;
         }
     </style>
+    {% endblock %}
 </head>
-<body>
+{% block content %}
     <div class="container">
         <header>
             <h1>{{ article.title }}</h1>
@@ -59,5 +61,4 @@
             </p>
         </footer>
     </div>
-</body>
-</html>
+{% endblock %}

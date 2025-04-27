@@ -1,11 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Commissions</title>
+    {% block styles %} {% endblock %}
 </head>
-<body>
+{% block content %}
     <h1>Commissions</h1>
     <ul>
         {% for commission in commissions %}
@@ -17,5 +18,4 @@
             <li>No commissions available.</li>
         {% endfor %}
     </ul>
-</body>
-</html>
+{% endblock %}

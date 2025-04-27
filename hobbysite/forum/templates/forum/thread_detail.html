@@ -1,7 +1,7 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
 <head>
+    {% block styles %}
     <style>
         table {
             width: 50%;
@@ -13,9 +13,10 @@
             padding: 10px;
         }
     </style>
+    {% endblock %}
 </head>
 
-<body>
+{% block content %}
     <h1>{{category}}</h1>
 
     {% for post in posts %}
@@ -39,6 +40,4 @@
 
     {% endfor %}
 
-</body>
-
-</html>
+{% endblock %}

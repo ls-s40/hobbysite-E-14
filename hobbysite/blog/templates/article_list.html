@@ -1,9 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog Articles</title>
+    {% block styles %}
     <style>
         .container {
             max-width: 1200px;
@@ -28,8 +29,9 @@
             margin-top: 1px;
         }
     </style>
+    {% endblock %}
 </head>
-<body>
+{% block content %}
     <div class="container">
         <header>
             <h1>Blog Articles</h1>
@@ -59,5 +61,4 @@
             {% endfor %}
         </main>
     </div>
-</body>
-</html>
+{% endblock %}
