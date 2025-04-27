@@ -1,12 +1,12 @@
 """URL config for commissions"""
 
 from django.urls import path
-from .views import commissions_list, commissions_detail
+from .views import commission_list, commission_detail
 
 
 urlpatterns = [
-        path('list/', commissions_list, name='commissions_list'),
-        path('detail/<int:commission_id>/', commissions_detail, name='commissions_detail')
+        path('list/', commission_list, name='commission_list'),
+        path('detail/<int:commission_id>/', commission_detail, name='commission_detail')
     ]
 
 app_name = "commissions"

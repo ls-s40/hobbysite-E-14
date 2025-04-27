@@ -6,14 +6,14 @@ from .models import Post, PostCategory
 # Create your views here.
 
 
-def threads_list(request,):
+def thread_list(request,):
     """Return render of list view page using PostCategory model."""
     postcategories = PostCategory.objects.all().order_by('name')
     ctx = {
         'postcategories': postcategories
     }
 
-    return render(request, 'forum/threads_list.html', ctx)
+    return render(request, 'forum/thread_list.html', ctx)
 
 
 def thread_detail(request, id):
