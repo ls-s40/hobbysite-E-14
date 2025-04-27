@@ -10,6 +10,9 @@ class ProductType(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
 
+    class Meta:
+        ordering = ['name']
+    
     def __str__(self):
         """Presents ProductType instances as human-readable representations."""
         return self.name

@@ -10,6 +10,9 @@ class ArticleCategory(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
 
+    class Meta:
+        ordering = ['name']
+    
     def __str__(self):
         """Return string name when asked to print object."""
         return self.name
