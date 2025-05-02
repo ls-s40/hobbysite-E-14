@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Home - HOBBYSITE{% endblock %}
+
+{% block content %}
+    <h2>Welcome to HOBBYSITE!</h2>
+    <ul>
+        <li>Explore your hobbies.</li>
+        <li>Connect with others.</li>
+        <li>Share your experiences.</li>
+    </ul>
+    <div class="nav-buttons">
+        <a href="/blog/articles/"><button>Blogs</button></a>
+        <a href="commissions/list"><button>Commissions</button></a>
+        <a href="forum/threads"><button>Forums</button></a>
+        <a href="merchstore/items"><button>Merchandise</button></a>
+        <a href="wiki/articles"><button>Wiki</button></a>
+    </div>
+    {% if user.is_authenticated %}
+        <p>Welcome, {{ user.username }}.</p>
+    {% else %}
+        <a href="{% url 'login' %}">Login</a>
+    {% endif %}
+{% endblock %}

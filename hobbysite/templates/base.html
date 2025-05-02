@@ -12,6 +12,13 @@
     <body>
         <header>
             <h1>HOBBYSITE</h1>
+            {% if user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+
+            {% endif %}
         </header>
         {% block content %}{% endblock %}
     </body>
