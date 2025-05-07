@@ -12,6 +12,17 @@
     <body>
         <header>
             <h1>HOBBYSITE</h1>
+            {% if request.resolver_match.url_name != 'home' %}
+                <a href="{% url 'home' %}"><button>Home</button></a>
+                {% if user.is_authenticated %}
+                    <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}"><button>Login</button></a>
+                {% endif %}
+            {% endif %}
         </header>
         {% block content %}{% endblock %}
     </body>
