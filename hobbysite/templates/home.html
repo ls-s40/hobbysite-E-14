@@ -3,12 +3,12 @@
 {% block title %}Home - HOBBYSITE{% endblock %}
 
 {% block content %}
-    <h2>Welcome to HOBBYSITE!</h2>
-    <ul>
-        <li>Explore your hobbies.</li>
-        <li>Connect with others.</li>
-        <li>Share your experiences.</li>
-    </ul>
+    {% if user.is_authenticated %}
+        <h2>Welcome to HOBBYSITE, {{ user.username }}!</h2>
+    {% else %}
+        <h2>Welcome to HOBBYSITE!</h2>
+        <p>Please <a href="{% url 'login' %}">log in</a> or <a href="{% url 'accounts:register' %}">register</a>.</p>
+    {% endif %}
     <div class="nav-buttons">
         <a href="/blog/articles/"><button>Blogs</button></a>
         <a href="commissions/list"><button>Commissions</button></a>
@@ -16,9 +16,13 @@
         <a href="merchstore/items"><button>Merchandise</button></a>
         <a href="wiki/articles"><button>Wiki</button></a>
     </div>
+    <br></br>
     {% if user.is_authenticated %}
-        <p>Welcome, {{ user.username }}.</p>
-    {% else %}
-        <a href="{% url 'login' %}">Login</a>
+        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
     {% endif %}
+
+
 {% endblock %}

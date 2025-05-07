@@ -1,9 +1,13 @@
-from django.shortcuts import render
-from django.views.generic import CreateView
+from django.shortcuts import render, redirect
 from .forms import RegisterForm
 
 
-class RegisterView(CreateView):
-    form_class = RegisterForm
-    template_name = 'registration/register.html'
-    success_url = '/accounts/login/'
+def register_view(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/accounts/login/')
+    else:
+        form = RegisterForm()
+    return render(request, 'registration/register.html', {'form': form})
