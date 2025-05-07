@@ -13,15 +13,23 @@
         <header>
             <h1>HOBBYSITE</h1>
             {% if request.resolver_match.url_name != 'home' %}
+                <div class="nav-buttons">
                 <a href="{% url 'home' %}"><button>Home</button></a>
                 {% if user.is_authenticated %}
                     <form action="{% url 'logout' %}" method="post" style="display: inline;">
                         {% csrf_token %}
                         <button type="submit">Logout</button>
                     </form>
+                    <a href="profile/{{user.username}}"><button>Profile</button></a>
                 {% else %}
                     <a href="{% url 'login' %}"><button>Login</button></a>
                 {% endif %}
+                    <a href="blog/articles/"><button>Blogs</button></a>
+                    <a href="commissions/list"><button>Commissions</button></a>
+                    <a href="forum/threads"><button>Forums</button></a>
+                    <a href="merchstore/items"><button>Merchandise</button></a>
+                    <a href="wiki/articles"><button>Wiki</button></a>
+                </div>
             {% endif %}
         </header>
         {% block content %}{% endblock %}
