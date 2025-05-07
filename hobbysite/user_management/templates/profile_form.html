@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Profile</title>
+    {% block styles %} {% endblock %}
+</head>
+{% block content %}
+    <h1>Update Profile</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Changes</button>
+    </form>
+    <a href="{% url 'profile_update' profile.user.username %}">Cancel</a>
+{% endblock %}

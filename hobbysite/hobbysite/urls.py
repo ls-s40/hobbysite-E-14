@@ -28,4 +28,5 @@ urlpatterns = [
     path('merchstore/', include(('merchstore.urls', 'merchstore'), namespace='merchstore')),
     path('commissions/', include(('commissions.urls', 'commissions'), namespace='commissions')),
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    path('profiles/', include(('user_management.urls', 'user_management'), namespace='user_management'))
 ]
