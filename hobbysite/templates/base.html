@@ -24,11 +24,11 @@
                 {% else %}
                     <a href="{% url 'login' %}"><button>Login</button></a>
                 {% endif %}
-                    <a href="blog/articles/"><button>Blogs</button></a>
-                    <a href="commissions/list"><button>Commissions</button></a>
-                    <a href="forum/threads"><button>Forums</button></a>
-                    <a href="merchstore/items"><button>Merchandise</button></a>
-                    <a href="wiki/articles"><button>Wiki</button></a>
+                    <a href="{% url 'blog:index' %}"><button>Blogs</button></a>
+                    <a href="{% url 'commissions:index' %}"><button>Commissions</button></a>
+                    <a href="{% url 'forum:index' %}"><button>Forums</button></a>
+                    <a href="{% url 'merchstore:index'%}"><button>Merchandise</button></a>
+                    <a href="{% url 'wiki:index' %}"><button>Wiki</button></a>
                 </div>
             {% endif %}
         </header>

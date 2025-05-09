@@ -21,3 +21,9 @@ def article_detail(request, id):
     }
 
     return render(request, 'wiki/article_detail.html', ctx)
+
+def article_create(request, id):
+    """Query article details and render it as html page."""
+
+    return render(request, 'wiki/article_detail.html')
+
