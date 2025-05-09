@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 
 class ArticleCategory(models.Model):
@@ -22,6 +23,11 @@ class Article(models.Model):
     """Creates model for Article."""
 
     title = models.CharField(max_length=255)
+    author = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True
+    )
     category = models.ForeignKey(
         ArticleCategory,
         on_delete=models.SET_NULL,

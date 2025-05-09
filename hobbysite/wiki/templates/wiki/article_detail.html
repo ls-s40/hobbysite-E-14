@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
     <head>
-        <title>Task List</title>
         {% block styles %}
         <style>
             table {
@@ -33,6 +32,7 @@
             <tbody> 
                 <tr><td id="category">{{article.category}}</td></tr>
                 <tr><td id="title" colspan="2">{{article.title}}</td></tr>
+                <tr><td>Author: </td><td>{{article.author}}</td></tr>
                 <tr><td>Published: </td><td>{{article.created_on}}</td></tr>
                 <tr><td>Last Updated:</td><td>{{article.updated_on}}</td></tr>
                 <tr class="gap-row"></tr>

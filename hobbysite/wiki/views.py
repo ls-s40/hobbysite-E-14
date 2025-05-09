@@ -1,8 +1,9 @@
 """Query database and render html page."""
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Article, ArticleCategory
+from .forms import ArticleForm
 
 
 def articles_list(request):
@@ -25,11 +26,17 @@ def article_detail(request, id):
 
 def article_create(request):
     """Query article details and render it as html page."""
-
-    articleCategories = ArticleCategory.objects.all()
-    ctx = {
-        'articleCategories': articleCategories
-    }
-
-    return render(request, 'wiki/article_create.html', ctx)
+    if request.method == 'POST':
+        articleForm = ArticleForm(request.POST)
+        if articleForm.is_valid():
+            article = articleForm.save(commit=False)
+            article.author = request.user
+            article.save()
+            return redirect(article.get_absolute_url())
+    else:
+        articleForm = ArticleForm()
+        ctx = {
+            'articleForm' : articleForm
+        }
+        return render(request, 'wiki/article_create.html', ctx)
 
