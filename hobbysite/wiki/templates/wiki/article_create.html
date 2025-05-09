@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+    <head>
+        {% block styles %}
+        <style>
+        </style>
+        {% endblock %}
+    </head>
+    {% block content %}
+        <h1>
+            Create
+        </h1>
+        <form action="{% url 'wiki:article_create'%}" method="post">
+            <!-- CSRF token for Django -->
+            {% csrf_token %}
+            
+            <label for="title">Title:</label><br>
+            <input type="text" id="title" name="title" required><br><br>
+    
+            <label for="category">Category:</label><br>
+            <select id="category" name="category" required>
+                <option value="" disabled selected>--Select Category--</option>
+                {% for articleCategory in articleCategories %}
+                    <option value="{{articleCategory.name}}">{{articleCategory.name}}</span>        
+                {% endfor %}
+            </select><br><br>
+    
+            <label for="entry">Article Body:</label><br>
+            <textarea id="entry" name="entry" rows="30" cols="100" required></textarea><br><br>
+    
+            <button type="submit">Submit Article</button>
+        </form>
+    {% endblock %}

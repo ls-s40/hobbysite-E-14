@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
     <head>
-        <title>Task List</title>
         {% block styles %} 
         <style>
             table {
@@ -25,11 +24,20 @@
             th:nth-child(3), td:nth-child(3) {
                 width: 17%;
             }
+            .article-list-head {
+                padding-right: 1rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
         </style>
         {% endblock %}
     </head>
     {% block content %}
-        <h1>Articles</h1>
+        <div class="article-list-head">
+            <h1>Articles</h1>
+            <a href="{% url 'wiki:article_create' %}"><button>Create an article</button></a>
+        </div>
         <table>
             <thead>
                 <tr>

@@ -1,7 +1,8 @@
 """Query database and render html page."""
 
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from .models import Article
+from .models import Article, ArticleCategory
 
 
 def articles_list(request):
@@ -22,8 +23,13 @@ def article_detail(request, id):
 
     return render(request, 'wiki/article_detail.html', ctx)
 
-def article_create(request, id):
+def article_create(request):
     """Query article details and render it as html page."""
 
-    return render(request, 'wiki/article_detail.html')
+    articleCategories = ArticleCategory.objects.all()
+    ctx = {
+        'articleCategories': articleCategories
+    }
+
+    return render(request, 'wiki/article_create.html', ctx)
 
