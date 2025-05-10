@@ -8,6 +8,8 @@ from .forms import CommissionForm, JobForm, JobApplicationForm
 # not sure kung kasama to
 from django.forms import modelformset_factory
 from django.urls import reverse
+from django.db.models import Sum
+
 
 """
 def commission_list(request):
@@ -90,15 +92,17 @@ def commission_create(request):
         form = CommissionForm(request.POST)
         formset = JobFormSet(request.POST, queryset=Job.objects.none())
 
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid():
             commission = form.save(commit=False)
             commission.author = request.user.profile
             commission.save()
 
-            for job_form in formset:
-                job = job_form.save(commit=False)
-                job.commission = commission
-                job.save()
+            if formset.is_valid():
+                for job_form in formset:
+                    if job_form.cleaned_data:
+                        job = job_form.save(commit=False)
+                        job.commission = commission
+                        job.save()
 
             return redirect('commissions:commissions_detail', pk=commission.pk)
     else:

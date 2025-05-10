@@ -28,7 +28,7 @@
                     {% if job.status == 'Full' or job.accepted_count >= job.manpower_required %}
                         <button disabled>Full</button>
                     {% else %}
-                        <form method="post" action="{% url 'commissions:apply_to_job' job.id %}">
+                        <form method="post" action="{% url 'commissions:commissions_detail' commission.pk %}">
                             {% csrf_token %}
                             <button type="submit">Apply to Job</button>
                         </form>
@@ -42,6 +42,10 @@
     <p><strong>Remaining Open Manpower:</strong> {{ open_manpower }}</p>
 
     {% if user == commission.author.user %}
-        <a href="{% url 'commissions:commissions_edit' commission.id %}">Edit Commission</a>
+        <a href="{% url 'commissions:commissions_update' commission.id %}">Edit Commission</a>
     {% endif %}
+<p></p>
+<a href="{% url 'commissions:index' %}">
+    <button type="button">Back to List</button>
+</a>
 {% endblock %}

@@ -56,7 +56,7 @@ class Job(models.Model):
         ]
 
     def __str__(self):
-        return f'Comment on {self.commission.title} at {self.created_on}'
+        return f"{self.role} (for {self.commission.title})"
 
 
 class JobApplication(models.Model):
