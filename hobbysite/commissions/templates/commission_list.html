@@ -8,11 +8,37 @@
 </head>
 {% block content %}
     <h1>Commissions</h1>
+    {% if user.is_authenticated %}
+        <h2>Your Commissions</h2>
+        <ul>
+            {% for commission in user_commissions %}
+                <li>
+                    <a href="{{ commission.get_absolute_url }}">{{ commission.title }}</a>
+                    (Status: {{ commission.status }}, Created: {{ commission.created_on|date:"Y-m-d" }})
+                </li>
+            {% empty %}
+                <li>You haven't created any commissions.</li>
+            {% endfor %}
+        </ul>
+        <h2>Applied Commissions</h2>
+        <ul>
+            {% for commission in applied_commissions %}
+                <li>
+                    <a href="{{ commission.get_absolute_url }}">{{ commission.title }}</a>
+                    (Status: {{ commission.status }}, Created: {{ commission.created_on|date:"Y-m-d" }})
+                </li>
+            {% empty %}
+                <li>You haven't applied to any jobs yet.</li>
+            {% endfor %}
+        </ul>
+        <p><a href="{% url 'commissions:commissions_create' %}">New Commission</a></p>
+    {% endif %}
+    <h2>Other Commissions</h2>
     <ul>
         {% for commission in commissions %}
             <li>
                 <a href="{{ commission.get_absolute_url }}">{{ commission.title }}</a>
-                (Created: {{ commission.created_on }}, Updated: {{ commission.updated_on }})
+                (Status: {{ commission.status }}, Created: {{ commission.created_on|date:"Y-m-d" }})
             </li>
         {% empty %}
             <li>No commissions available.</li>

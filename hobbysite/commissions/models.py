@@ -2,16 +2,16 @@
 
 from django.db import models
 from django.urls import reverse
-from accounts.models import Profile # mali ata to
+from user_management.models import Profile # mali ata to
 
 class Commission(models.Model):
     """Commission model"""
-STATUS_CHOICES = [
-    ('Open', 'Open'),
-    ('Full', 'Full'),
-    ('Completed', 'Completed'),
-    ('Discontinued', 'Discontinued')
-]
+    STATUS_CHOICES = [
+        ('Open', 'Open'),
+        ('Full', 'Full'),
+        ('Completed', 'Completed'),
+        ('Discontinued', 'Discontinued')
+    ]
 
     title = models.CharField(max_length=255)
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
