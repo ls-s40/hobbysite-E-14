@@ -26,7 +26,7 @@ class Article(models.Model):
     """Model for articles."""
 
     title = models.CharField(max_length=255)
-    author = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='article_author')
     category = models.ForeignKey(
         ArticleCategory,
         on_delete=models.SET_NULL,
