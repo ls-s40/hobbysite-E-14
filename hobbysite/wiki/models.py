@@ -44,3 +44,22 @@ class Article(models.Model):
     def __str__(self):
         """Return string name when asked to print object."""
         return self.title
+    
+    class Meta:
+        ordering = ['-created_on']
+
+class Comment(models.Model):
+    author = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True
+    )
+    article = models.ForeignKey(
+        Article,
+        on_delete=models.CASCADE,
+    )
+    entry = models.TextField()
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+    class Meta:
+        ordering = ['-created_on']

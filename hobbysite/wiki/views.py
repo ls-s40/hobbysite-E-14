@@ -8,7 +8,7 @@ from .forms import ArticleForm
 
 def articles_list(request):
     """Query list of articles and render it as html page."""
-    a = Article.objects.all().order_by('-created_on')
+    a = Article.objects.all()
     ctx = {
         'articles': a
     }
