@@ -2,27 +2,46 @@
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .models import Article, ArticleCategory
-from .forms import ArticleForm
+from .models import Article, ArticleCategory, Comment
+from .forms import ArticleForm, CommentForm
 
 
 def articles_list(request):
     """Query list of articles and render it as html page."""
-    a = Article.objects.all()
+    articles = Article.objects.all()
     ctx = {
-        'articles': a
+        'articles': articles
     }
     return render(request, 'wiki/articles_list.html', ctx)
 
 
 def article_detail(request, id):
     """Query article details and render it as html page."""
-    a = Article.objects.get(id=id)
-    ctx = {
-        'article': a
-    }
 
-    return render(request, 'wiki/article_detail.html', ctx)
+    article = Article.objects.get(id=id)
+    if request.method == 'POST':
+        commentForm = CommentForm(request.POST)
+        if commentForm.is_valid():
+            comment = commentForm.save(commit=False)
+            comment.article = article
+            comment.author = request.user
+            comment.save()
+            return redirect(request.get_full_path())
+    else:
+        userIsAuthenticated = request.user.is_authenticated
+        userIsAuthor = request.user == article.author
+        relatedArticles = Article.objects.filter(category=article.category).exclude(id=article.id)[:3]
+        commentForm = CommentForm()
+        comments = Comment.objects.filter(article__id=id)
+        ctx = {
+            'article': article,
+            'relatedArticles': relatedArticles,
+            'comments': comments,
+            'commentForm': commentForm,
+            'userIsAuthenticated': userIsAuthenticated,
+            'userIsAuthor': userIsAuthor
+        }
+        return render(request, 'wiki/article_detail.html', ctx)
 
 def article_create(request):
     """Query article details and render it as html page."""
