@@ -21,8 +21,6 @@
                 <strong>{{ job.role }}</strong><br>
                 Status: {{ job.status }}<br>
                 Manpower Required: {{ job.manpower_required }}<br>
-                Accepted Applicants: {{ job.accepted_count }}<br>
-                Remaining Slots: {{ job.manpower_required|add:"-job.accepted_count" }}<br>
 
                 {% if user.is_authenticated %}
                     {% if job.status == 'Full' or job.accepted_count >= job.manpower_required %}
@@ -30,6 +28,7 @@
                     {% else %}
                         <form method="post" action="{% url 'commissions:commissions_detail' commission.pk %}">
                             {% csrf_token %}
+                            <input type="hidden" name="job_id" value="{{ job.id }}">
                             <button type="submit">Apply to Job</button>
                         </form>
                     {% endif %}
@@ -38,8 +37,8 @@
         {% endfor %}
     </ul>
     
-    <p><strong>Total Manpower Needed:</strong> {{ total_manpower }}</p>
-    <p><strong>Remaining Open Manpower:</strong> {{ open_manpower }}</p>
+    <p><strong>Manpower Required:</strong> {{ total_manpower }}</p>
+    <p><strong>Open Manpower:</strong> {{ open_manpower }}</p>
 
     {% if user == commission.author.user %}
         <a href="{% url 'commissions:commissions_update' commission.id %}">Edit Commission</a>

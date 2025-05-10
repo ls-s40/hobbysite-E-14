@@ -122,21 +122,24 @@ def commission_update(request, pk):
     if commission.author != request.user.profile:
         return redirect('commissions:commissions_detail', pk=pk)
 
+    JobFormSet = modelformset_factory(Job, form=JobForm, extra=1)
+
     if request.method == 'POST':
         form = CommissionForm(request.POST, instance=commission)
-        if form.is_valid():
-            updated_commission = form.save()
+        formset = JobFormSet(request.POST, queryset=Job.objects.filter(commission=commission))
 
-            # Auto-update status if all jobs are full
-            jobs = updated_commission.job_set.all()
-            if all(job.status == 'Full' for job in jobs):
-                updated_commission.status = 'Full'
-                updated_commission.save()
-
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            jobs = formset.save(commit=False)
+            for job in jobs:
+                job.commission = commission
+                job.save()
             return redirect('commissions:commissions_detail', pk=pk)
     else:
         form = CommissionForm(instance=commission)
+        formset = JobFormSet(queryset=Job.objects.filter(commission=commission))
 
     return render(request, 'commission_form.html', {
-        'form': form
+        'form': form,
+        'formset': formset
     })
