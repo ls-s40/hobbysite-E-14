@@ -24,10 +24,13 @@
     <p><strong>Last updated:</strong> {{ thread.updated_on|date:"F j, Y, g:i a" }}</p>
 
     <div>
+        <br>
         <p>{{ thread.entry|linebreaks }}</p>
+        <br>
     </div>
 
     <h3>Comments</h3>
+
 
     <div>
     {% if comments %}
@@ -46,6 +49,16 @@
     </div>
 
     <div>
+    <h4>Add a Comment:</h4>
+    <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Post Comment</button>
+    </form>
+    <br>
+    </div>
+
+    <div>
     {% if other_threads %}
     <h3>Related Threads:</h3>
     <ul>
@@ -56,6 +69,7 @@
     {% else %}
     <p>No related threads found.</p>
     {% endif %}
+    <br>
     </div>
 
 
