@@ -21,7 +21,7 @@ class ProductType(models.Model):
 class Product(models.Model):
     """Represents a Product Model."""
 
-    STATUS_CHOICES=[
+    PRODUCT_STATUS_CHOICES=[
         ('available', 'Available'),
         ('on_sale', 'On sale'),
         ('out_of_stock', 'Out of stock'),
@@ -33,14 +33,14 @@ class Product(models.Model):
     stock = models.PositiveIntegerField(null=True)
     status = models.CharField(
         max_length=20,
-        choices=STATUS_CHOICES,
+        choices=PRODUCT_STATUS_CHOICES,
         default='available'
     )
     product_type = models.ForeignKey(
         ProductType,
         on_delete=models.SET_NULL,
-        null=True,
         related_name='products',
+        null=True,
         editable=False
     )
     owner=models.ForeignKey(
@@ -63,3 +63,34 @@ class Product(models.Model):
     def get_absolute_url(self):
         """Return specific URL to view the instance."""
         return reverse('merchstore:product-detail', args=[str(self.id)])
+
+
+class Transaction(models.Model):
+    """Represents a Transaction Model."""
+
+    TRANSACTION_STATUS_CHOICES=[
+        ('on_cart', 'On cart'),
+        ('to_pay', 'To Pay'),
+        ('to_ship', 'To Ship'),
+        ('to_receive', 'To Receive'),
+        ('delivered', 'Delivered'),
+    ]
+
+    buyer = models.ForeignKey(
+        'user_management.Profile',
+        on_delete=models.SET_NULL,
+        related_name='transactions',
+        null=True
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.SET_NULL,
+        related_name='transactions',
+        null=True
+    )
+    amount = models.PositiveIntegerField(null=True)
+    status = models.CharField(
+        max_length=20,
+        choices=TRANSACTION_STATUS_CHOICES,
+    )
+    created_on=models.DateTimeField(auto_now_add=True, null=True)
