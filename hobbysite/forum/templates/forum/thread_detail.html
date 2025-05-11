@@ -27,7 +27,13 @@
         <br>
         <p>{{ thread.entry|linebreaks }}</p>
         <br>
+        {% if thread.image %}
+        <img src="{{ thread.image.url }}" alt="{{ thread.title }}" style="max-width: 200px; height: auto;">
+        {% endif %}
+        <br>
     </div>
+
+    
 
     <h3>Comments</h3>
 
