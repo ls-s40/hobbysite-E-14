@@ -8,6 +8,7 @@
 </head>
 {% block content %}
     <h1>Commissions</h1>
+    <hr>
     {% if user.is_authenticated %}
         <h3>Your Commissions</h3>
         <ul>
@@ -33,6 +34,7 @@
         </ul>
         <p><a href="{% url 'commissions:commissions_create' %}">New Commission</a></p>
     {% endif %}
+    <hr>
     <h2>All Commissions</h2>
     <ul>
         {% for commission in commissions %}

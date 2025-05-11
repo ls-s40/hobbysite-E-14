@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Commission, Job, JobApplication
 from .forms import CommissionForm, JobForm, JobApplicationForm
 # not sure kung kasama to
-from django.forms import modelformset_factory
+from django.forms import inlineformset_factory
 from django.urls import reverse
 from django.db.models import Sum
 
@@ -55,16 +55,16 @@ def commission_detail(request, pk):
     jobs = Job.objects.filter(commission=commission)
 
     # Calculate manpower
-    total_manpower = jobs.aggregate(Sum('manpower_required'))['manpower_required__sum'] or 0
+    total_manpower = 0
     open_manpower = 0
     for job in jobs:
-        accepted = JobApplication.objects.filter(job=job, status='Accepted').count()
-        open_manpower += max(job.manpower_required - accepted, 0)
+        total_manpower += job.manpower_required
+        accepted_count = JobApplication.objects.filter(job=job, status='Accepted').count()
+        open_manpower += max(job.manpower_required - accepted_count, 0)
 
     # Handle job application if submitted
     if request.method == 'POST' and request.user.is_authenticated:
-        job_id = request.POST.get('job_id')
-        job = get_object_or_404(Job, id=job_id)
+        job = get_object_or_404(Job, id=request.POST.get('job_id'))
         accepted = JobApplication.objects.filter(job=job, status='Accepted').count()
         if accepted < job.manpower_required:
             JobApplication.objects.get_or_create(
@@ -78,15 +78,14 @@ def commission_detail(request, pk):
         'commission': commission,
         'jobs': jobs,
         'total_manpower': total_manpower,
-        'open_manpower': open_manpower,
-        'job_application_form': JobApplicationForm(),
+        'open_manpower': open_manpower
     })
 
 
 # --- Commission Create View ---
 @login_required
 def commission_create(request):
-    JobFormSet = modelformset_factory(Job, form=JobForm, extra=1)
+    JobFormSet = inlineformset_factory(Commission, Job, form=JobForm, extra=1, can_delete=False)
 
     if request.method == 'POST':
         form = CommissionForm(request.POST)
@@ -122,11 +121,11 @@ def commission_update(request, pk):
     if commission.author != request.user.profile:
         return redirect('commissions:commissions_detail', pk=pk)
 
-    JobFormSet = modelformset_factory(Job, form=JobForm, extra=1)
+    JobFormSet = inlineformset_factory(Commission, Job, form=JobForm, extra=1, can_delete=False)
 
     if request.method == 'POST':
         form = CommissionForm(request.POST, instance=commission)
-        formset = JobFormSet(request.POST, queryset=Job.objects.filter(commission=commission))
+        formset = JobFormSet(request.POST, instance=commission)
 
         if form.is_valid() and formset.is_valid():
             form.save()
@@ -137,7 +136,7 @@ def commission_update(request, pk):
             return redirect('commissions:commissions_detail', pk=pk)
     else:
         form = CommissionForm(instance=commission)
-        formset = JobFormSet(queryset=Job.objects.filter(commission=commission))
+        formset = JobFormSet(instance=commission)
 
     return render(request, 'commission_form.html', {
         'form': form,

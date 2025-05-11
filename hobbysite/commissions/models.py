@@ -2,7 +2,7 @@
 
 from django.db import models
 from django.urls import reverse
-from user_management.models import Profile # mali ata to
+from user_management.models import Profile
 
 class Commission(models.Model):
     """Commission model"""

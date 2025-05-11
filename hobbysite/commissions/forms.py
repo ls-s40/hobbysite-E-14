@@ -17,6 +17,7 @@ class JobForm(forms.ModelForm):
             'status': forms.Select(attrs={'class': 'form-control'}),
         }
 
+
 class JobApplicationForm(forms.ModelForm):
     class Meta:
         model = JobApplication
@@ -24,3 +25,4 @@ class JobApplicationForm(forms.ModelForm):
         widgets = {
             'status': forms.Select(attrs={'class': 'form-control'}),
         }
+
