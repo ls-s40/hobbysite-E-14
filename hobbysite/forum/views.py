@@ -69,3 +69,24 @@ def create_thread(request):
 
     ctx = {'form': form}
     return render(request, 'forum/add_thread.html', ctx)
+
+@login_required
+def edit_thread(request, id):
+    thread = get_object_or_404(Thread, id=id)
+
+    if thread.author != Profile.objects.get(user=request.user):
+        return redirect('forum:index')
+    
+    if request.method == 'POST':
+        form = ThreadForm(request.POST, request.FILES, instance=thread)
+        if form.is_valid():
+            form.save()
+            return redirect(thread.get_absolute_url())
+    else:
+        form = ThreadForm(instance=thread)
+
+    ctx = {
+        'form': form,
+        'thread': thread
+        }
+    return render(request, 'forum/edit_thread.html', ctx)

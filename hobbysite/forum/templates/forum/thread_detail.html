@@ -72,6 +72,10 @@
     <br>
     </div>
 
+    {% if request.user.is_authenticated and thread.author.user == request.user %}
+    <a href="{% url 'forum:edit_thread' thread.id %}">Edit Thread</a>
+    {% endif %}
+
 
     <p><a href="{% url 'forum:index' %}">Back to Threads</a></p>
 
