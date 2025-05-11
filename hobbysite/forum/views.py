@@ -1,9 +1,10 @@
 """Manages the different views of the forum app."""
 
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from .models import Thread, ThreadCategory
 from django.contrib.auth.decorators import login_required
 from user_management.models import Profile
+from .forms import ThreadForm
 
 # Create your views here.
 
@@ -40,3 +41,19 @@ def thread_detail(request, id):
         'other_threads': other_threads
     }
     return render(request, 'forum/thread_detail.html', ctx)
+
+@login_required
+def create_thread(request):
+    """Generate view to add a thread."""
+    if request.method == 'POST':
+        form = ThreadForm(request.POST, request.FILES)
+        if form.is_valid():
+            thread = form.save(commit=False)
+            thread.author = Profile.objects.get(user=request.user)
+            thread.save()
+            return redirect(thread.get_absolute_url())
+    else:
+        form = ThreadForm()
+
+    ctx = {'form': form}
+    return render(request, 'forum/add_thread.html', ctx)
