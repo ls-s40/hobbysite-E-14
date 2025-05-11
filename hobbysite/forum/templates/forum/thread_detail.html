@@ -19,19 +19,19 @@
 {% block content %}
     <h1>{{category}}</h1>
 
-    {% for post in posts %}
+    {% for thread in threads %}
 
     <table>
         <thead>
-            <th colspan="2">{{post.title}}</th>
+            <th colspan="2">{{thread.title}}</th>
         </thead>
         <tbody>
             <tr>
-                <td>Created on: {{post.created_on}}</td>
-                <td>Last Updated: {{post.updated_on}}</td>
+                <td>Created on: {{thread.created_on}}</td>
+                <td>Last Updated: {{thread.updated_on}}</td>
             </tr>
             <tr>
-                <td colspan="2">{{post.entry}}</td>
+                <td colspan="2">{{thread.entry}}</td>
             </tr>
         </tbody>
     </table>
