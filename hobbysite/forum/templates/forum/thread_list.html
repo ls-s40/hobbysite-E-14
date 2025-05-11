@@ -19,18 +19,26 @@
 {% block content %}
     <h1>Threads</h1>
 
-    {% for category in threadcategories %}
-    <h2>{{ category.name }}</h2>
+    {% if user_threads %}
+    <h2>Your Threads</h2>
     <ul>
-        {% for thread in threads %}
-            {% if thread.category == category %}
-                <li><a href="{% url 'forum:thread_detail' thread.id %}">{{ thread.title }}</a></li>
-            {% endif %}
-        {% empty %}
-            <li>No threads available.</li>
-         {% endfor %}
+        {% for thread in user_threads %}
+        <li><a href="{% url 'forum:thread_detail' thread.id %}">{{ thread.title }}</a></li>
+        {% endfor %}
     </ul>
-    {% endfor %}
+    {% endif %}
 
+    <h2>All Threads</h2>
+
+    {% for category in threadcategories %}
+        <h3>{{ category.name }}</h3>
+        <ul>
+        {% for thread in all_threads %}
+            {% if thread.category == category %}
+            <li><a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a></li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+    {% endfor %}
 
 {% endblock %}

@@ -64,4 +64,4 @@ class Comment(models.Model):
     class Meta:
         """Meta options for the model."""
 
-        ordering = ['-created_on']
+        ordering = ['created_on']

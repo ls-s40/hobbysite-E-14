@@ -25,6 +25,24 @@
         <p>{{ thread.entry|linebreaks }}</p>
     </div>
 
+    <h3>Comments</h3>
+
+    <div>
+    {% if comments %}
+    <ul>
+        {% for comment in comments %}
+        <li>
+            <strong>{{ comment.author.display_name|default:comment.author.user.username }}</strong>
+            <i>{{ comment.created_on|date:"F j, Y, g:i a" }}</i><br>
+            {{ comment.entry|linebreaks }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No comments yet.</p>
+    {% endif %}
+    </div>
+    
     <p><a href="{% url 'forum:index' %}">Back to Threads</a></p>
 
 {% endblock %}

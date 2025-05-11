@@ -2,17 +2,26 @@
 
 from django.shortcuts import get_object_or_404, render
 from .models import Thread, ThreadCategory
+from django.contrib.auth.decorators import login_required
+from user_management.models import Profile
 
 # Create your views here.
 
-
-def thread_list(request,):
+@login_required
+def thread_list(request):
     """Return render of list view page using PostCategory model."""
     threadcategories = ThreadCategory.objects.all().order_by('name')
-    threads = Thread.objects.all()
+
+    current_user = Profile.objects.get(user=request.user)
+    user_threads = Thread.objects.filter(author=current_user).order_by('-created_on')
+
+    all_threads = Thread.objects.exclude(author=current_user).select_related('category')
+
+
     ctx = {
         'threadcategories': threadcategories,
-        'threads': threads
+        'user_threads': user_threads,
+        'all_threads': all_threads
     }
 
     return render(request, 'forum/thread_list.html', ctx)
@@ -21,7 +30,9 @@ def thread_list(request,):
 def thread_detail(request, id):
     """Return render of detail view page using Thread and ThreadCateogry models."""
     thread = get_object_or_404(Thread, id=id)
+    comments = thread.comments.all()
     ctx = {
-        'thread': thread
+        'thread': thread,
+        'comments': comments
     }
     return render(request, 'forum/thread_detail.html', ctx)
