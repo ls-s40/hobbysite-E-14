@@ -30,9 +30,13 @@ def thread_list(request):
 def thread_detail(request, id):
     """Return render of detail view page using Thread and ThreadCateogry models."""
     thread = get_object_or_404(Thread, id=id)
+    category = thread.category
+    other_threads = Thread.objects.filter(category=category).exclude(id=thread.id)
+
     comments = thread.comments.all()
     ctx = {
         'thread': thread,
-        'comments': comments
+        'comments': comments,
+        'other_threads': other_threads
     }
     return render(request, 'forum/thread_detail.html', ctx)

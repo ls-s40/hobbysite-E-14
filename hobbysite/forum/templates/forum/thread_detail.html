@@ -42,7 +42,21 @@
     <p>No comments yet.</p>
     {% endif %}
     </div>
-    
+
+    <div>
+    {% if other_threads %}
+    <h3>Related Threads:</h3>
+    <ul>
+        {% for thread in other_threads %}
+        <li><a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No related threads found.</p>
+    {% endif %}
+    </div>
+
+
     <p><a href="{% url 'forum:index' %}">Back to Threads</a></p>
 
 {% endblock %}
