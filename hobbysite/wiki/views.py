@@ -31,7 +31,6 @@ def articles_list(request):
         'user_articles': user_articles,
         'articles_categorized': articles_categorized
     }
-    print(ctx)
 
     return render(request, 'wiki/articles_list.html', ctx)
 
@@ -67,7 +66,7 @@ def article_detail(request, id):
 def article_create(request):
     """Query article details and render it as html page."""
     if request.method == 'POST':
-        articleForm = ArticleForm(request.POST)
+        articleForm = ArticleForm(request.POST, request.FILES)
         if articleForm.is_valid():
             article = articleForm.save(commit=False)
             article.author = request.user
@@ -83,7 +82,7 @@ def article_create(request):
 def article_update(request, id):
     article = Article.objects.get(id=id)
     if request.method == 'POST':
-        articleForm = ArticleForm(request.POST, instance=article)
+        articleForm = ArticleForm(request.POST, request.FILES, instance=article)
         if articleForm.is_valid():
             articleForm.save()
             return redirect(article.get_absolute_url())

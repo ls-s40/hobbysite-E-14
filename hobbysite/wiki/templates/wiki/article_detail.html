@@ -3,9 +3,16 @@
     <head>
         {% block styles %}
         <style>
+            .nav-container {
+                display: flex;
+                width: 100%;
+                height: 3rem;
+                justify-content: space-between;
+                align-items: center;
+            }
             .article-container{
                 padding: 4vh 8vw;
-                width: 100vw;
+                width: 80vw;
             }
             .article-category {
                 font-size: 1.25rem;
@@ -24,6 +31,10 @@
             }
             button {
                 margin-top: 5px;
+            }
+            .header-image {
+                max-width: 70%;
+                max-height: 30vh;
             }
             .related-articles-container{
                 display: flex;
@@ -46,18 +57,24 @@
     </head>
     {% block content %}
     <div class="article-container">
-        <a href="{% url 'wiki:index' %}">Go back to articles</a>
-        <br><br>
+        <div class="nav-container">
+            <a href="{% url 'wiki:index' %}">Go back to articles</a>
+            {% if userIsAuthor %}
+                <a href="{{article.get_absolute_url}}edit"><button>Edit article</button></a>
+            {% endif %}
+        </div>
+        <br>
+        {% if article.header_image %}
+            <img class="header-image" src="{{ article.header_image.url }}" alt="{{ article.name }}">
+        {% endif %}
         <p class="article-category">{{article.category}}</p>
         <h1 class="article-title">{{article.title}}</h1>
-        <p class="article-detail">Author: </td><td>{{article.author}}</p>
-        <p class="article-detail">Last Updated: {{article.updated_on}}</p>
-        <p class="article-detail">Published: {{article.created_on}}</p>
-        {% if userIsAuthor %}
-            <a href="{{article.get_absolute_url}}edit"><button>Edit article</button></a>
-        {% endif %}
+        <p class="article-detail">By </td><td>{{article.author}}</p>
         <br><br>
         <p>{{article.entry}}</p>
+        <br><br>
+        <p class="article-detail">Last Updated: {{article.updated_on}}</p>
+        <p class="article-detail">Published: {{article.created_on}}</p>
         <br><br>
         <h3>Read more {{article.category}}</h3>
         <div class="related-articles-container">
@@ -65,8 +82,6 @@
                 <a href="{{relatedArticle.get_absolute_url}}"><p>{{relatedArticle.title}}</p></a>
             {% endfor %}
         </div>
-        <br>
-        <h3>Comments</h3>
         {% if userIsAuthenticated %}
             <form method="post">
                 {% csrf_token %}
@@ -74,6 +89,8 @@
                 <button type="submit">Submit</button>
             </form>
         {% endif %}
+        <br>
+        <h3>Comments</h3>
         <br>
         {% for comment in comments %}
             <p class="comment-author">{{comment.author}}</p>
