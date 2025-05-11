@@ -17,27 +17,14 @@
 </head>
 
 {% block content %}
-    <h1>{{category}}</h1>
+    <h1>{{ thread.title }}</h1>
+    <p><strong>Author:</strong> {{ thread.author.user.username }}</p>
+    <p><strong>Category:</strong> {{ thread.category.name }}</p>
 
-    {% for thread in threads %}
+    <div>
+        <p>{{ thread.entry|linebreaks }}</p>
+    </div>
 
-    <table>
-        <thead>
-            <th colspan="2">{{thread.title}}</th>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Created on: {{thread.created_on}}</td>
-                <td>Last Updated: {{thread.updated_on}}</td>
-            </tr>
-            <tr>
-                <td colspan="2">{{thread.entry}}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <br>
-
-    {% endfor %}
+    <p><a href="{% url 'forum:index' %}">Back to Threads</a></p>
 
 {% endblock %}
