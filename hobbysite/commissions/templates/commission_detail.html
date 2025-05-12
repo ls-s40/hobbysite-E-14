@@ -14,16 +14,17 @@
     <p><strong>Created On:</strong> {{ commission.created_on }}</p>
     <p><strong>Last Updated:</strong> {{ commission.updated_on }}</p>
 
+    <hr>
     <h2>Jobs</h2>
     <ul>
         {% for job in jobs %}
             <li>
                 <strong>{{ job.role }}</strong><br>
-                Status: {{ job.status }}<br>
                 Manpower Required: {{ job.manpower_required }}<br>
+                Slots Left: {{ job.slots }}<br>
 
                 {% if user.is_authenticated %}
-                    {% if job.status == 'Full' or job.accepted_count >= job.manpower_required %}
+                    {% if job.status == 'Full' %}
                         <button disabled>Full</button>
                     {% else %}
                         <form method="post" action="{% url 'commissions:commissions_detail' commission.pk %}">
@@ -43,7 +44,7 @@
     {% if user == commission.author.user %}
         <a href="{% url 'commissions:commissions_update' commission.id %}">Edit Commission</a>
     {% endif %}
-<p></p>
+<hr>
 <a href="{% url 'commissions:index' %}">
     <button type="button">Back to List</button>
 </a>

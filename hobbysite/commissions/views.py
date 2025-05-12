@@ -1,33 +1,26 @@
 """Views for the commissions app"""
 
-# idk about redirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Commission, Job, JobApplication
 from .forms import CommissionForm, JobForm, JobApplicationForm
-# not sure kung kasama to
 from django.forms import inlineformset_factory
 from django.urls import reverse
-from django.db.models import Sum
 
 
-"""
 def commission_list(request):
-    ""List of all commissions""
+    """
     commissions = Commission.objects.all()
-    ctx = {"commissions": commissions}
-    return render(request, "commission_list.html", ctx)
+    for commission in commissions:
+        jobs = Job.objects.filter(commission=commission)
+        for job in jobs:
+            job_accepted = JobApplication.objects.filter(job=job, status='Accepted').count()
+            if job_accepted >= job.manpower_required and job.status != 'Full':
+            job.status = 'Full'
+            job.save()
+    """
 
-
-def commission_detail(request, commission_id):
-    ""Details of a specific commission""
-    commission = get_object_or_404(Commission, id=commission_id)
-    ctx = {"commission": commission}
-    return render(request, "commission_detail.html", ctx)
-"""
-
-# --- Commission List View ---
-def commission_list(request):
+    
     status_order = ['Open', 'Full', 'Completed', 'Discontinued']
     commissions = sorted(
         Commission.objects.all(),
@@ -38,9 +31,7 @@ def commission_list(request):
     if request.user.is_authenticated:
         profile = request.user.profile
         user_commissions = Commission.objects.filter(author=profile)
-        applied_commissions = Commission.objects.filter(
-            job__jobapplication__applicant=profile
-        ).distinct()
+        applied_commissions = Commission.objects.filter(job__jobapplication__applicant=profile).distinct()
 
     return render(request, 'commission_list.html', {
         'commissions': commissions,
@@ -49,29 +40,42 @@ def commission_list(request):
     })
 
 
-# --- Commission Detail View ---
 def commission_detail(request, pk):
     commission = get_object_or_404(Commission, pk=pk)
     jobs = Job.objects.filter(commission=commission)
 
-    # Calculate manpower
     total_manpower = 0
-    open_manpower = 0
+    total_accepted = 0
     for job in jobs:
         total_manpower += job.manpower_required
-        accepted_count = JobApplication.objects.filter(job=job, status='Accepted').count()
-        open_manpower += max(job.manpower_required - accepted_count, 0)
+        total_accepted += JobApplication.objects.filter(job=job, status='Accepted').count()
+        job_accepted = JobApplication.objects.filter(job=job, status='Accepted').count()
+        job.slots = job.manpower_required - job_accepted
 
-    # Handle job application if submitted
+        # checks the status of the job
+        if job_accepted >= job.manpower_required and job.status != 'Full':
+            job.status = 'Full'
+            job.save()
+
+        print(job)
+        print(job.status)
+        print()
+    open_manpower = total_manpower - total_accepted
+
+    """
+    # sets the commission status to full. kaso yung problema is para magupdate yung status ng commission, dapat pumunta muna sa detail view
+    if open_manpower == 0:
+        commission.status = 'Full'
+        commission.save()
+    """
+
     if request.method == 'POST' and request.user.is_authenticated:
         job = get_object_or_404(Job, id=request.POST.get('job_id'))
-        accepted = JobApplication.objects.filter(job=job, status='Accepted').count()
-        if accepted < job.manpower_required:
-            JobApplication.objects.get_or_create(
-                job=job,
-                applicant=request.user.profile,
-                defaults={'status': 'Pending'}
-            )
+        JobApplication.objects.get_or_create(
+            job=job,
+            applicant=request.user.profile,
+            defaults={'status': 'Pending'}
+        )
         return redirect('commissions:commissions_detail', pk=commission.pk)
 
     return render(request, 'commission_detail.html', {
@@ -82,7 +86,6 @@ def commission_detail(request, pk):
     })
 
 
-# --- Commission Create View ---
 @login_required
 def commission_create(request):
     JobFormSet = inlineformset_factory(Commission, Job, form=JobForm, extra=1, can_delete=False)
@@ -114,14 +117,15 @@ def commission_create(request):
     })
 
 
-# --- Commission Update View ---
 @login_required
 def commission_update(request, pk):
     commission = get_object_or_404(Commission, pk=pk)
+    JobFormSet = inlineformset_factory(Commission, Job, form=JobForm, extra=1, can_delete=False)
+
+    print(commission.status)
+    
     if commission.author != request.user.profile:
         return redirect('commissions:commissions_detail', pk=pk)
-
-    JobFormSet = inlineformset_factory(Commission, Job, form=JobForm, extra=1, can_delete=False)
 
     if request.method == 'POST':
         form = CommissionForm(request.POST, instance=commission)
@@ -142,3 +146,4 @@ def commission_update(request, pk):
         'form': form,
         'formset': formset
     })
+

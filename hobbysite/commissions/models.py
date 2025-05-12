@@ -30,6 +30,11 @@ class Commission(models.Model):
         """Returns the absolute URL for a commission"""
         return reverse('commissions:commissions_detail', args=[str(self.id)])
 
+    """
+    def update_status(self):
+        jobs = self.job_set
+    """
+
 
 class Job(models.Model):
     """Comment model"""
@@ -56,7 +61,7 @@ class Job(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.role} (for {self.commission.title})"
+        return f"{self.role} for {self.commission.title}"
 
 
 class JobApplication(models.Model):
