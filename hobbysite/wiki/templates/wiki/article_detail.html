@@ -10,7 +10,7 @@
                 justify-content: space-between;
                 align-items: center;
             }
-            .article-container{
+            .article-container {
                 padding: 4vh 8vw;
                 width: 80vw;
             }
@@ -36,7 +36,7 @@
                 max-width: 70%;
                 max-height: 30vh;
             }
-            .related-articles-container{
+            .related-articles-container {
                 display: flex;
                 gap: 20px;
             }
@@ -59,7 +59,7 @@
     <div class="article-container">
         <div class="nav-container">
             <a href="{% url 'wiki:index' %}">Go back to articles</a>
-            {% if userIsAuthor %}
+            {% if user_is_author %}
                 <a href="{{article.get_absolute_url}}edit"><button>Edit article</button></a>
             {% endif %}
         </div>
@@ -78,14 +78,14 @@
         <br><br>
         <h3>Read more {{article.category}}</h3>
         <div class="related-articles-container">
-            {% for relatedArticle in relatedArticles %}
-                <a href="{{relatedArticle.get_absolute_url}}"><p>{{relatedArticle.title}}</p></a>
+            {% for related_article in related_articles %}
+                <a href="{{related_article.get_absolute_url}}"><p>{{related_article.title}}</p></a>
             {% endfor %}
         </div>
-        {% if userIsAuthenticated %}
+        {% if user_is_authenticated %}
             <form method="post">
                 {% csrf_token %}
-                {{ commentForm.as_p }}
+                {{ comment_form.as_p }}
                 <button type="submit">Submit</button>
             </form>
         {% endif %}

@@ -16,7 +16,7 @@
         </h2>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ articleForm.as_p }}
+            {{ article_form.as_p }}
             <button type="submit">Submit</button>
         </form>
     </div>
