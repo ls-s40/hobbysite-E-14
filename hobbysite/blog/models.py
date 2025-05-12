@@ -26,13 +26,20 @@ class Article(models.Model):
     """Model for articles."""
 
     title = models.CharField(max_length=255)
-    author = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='article_author')
+    author = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name='article_author'
+        )
     category = models.ForeignKey(
         ArticleCategory,
         on_delete=models.SET_NULL,
         null=True, related_name='articles')
     entry = models.TextField()
-    header_image = models.ImageField(upload_to='blog/images/', blank=True, null=True)
+    header_image = models.ImageField(
+        upload_to='blog/images/',
+        blank=True,
+        null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 
@@ -49,11 +56,20 @@ class Article(models.Model):
 
         ordering = ['-created_on']
 
+
 class Comment(models.Model):
     """Model for comments on articles."""
 
-    author = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='comments')
-    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name='comments'
+        )
+    article = models.ForeignKey(
+        Article,
+        on_delete=models.CASCADE,
+        related_name='comments'
+        )
     entry = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
