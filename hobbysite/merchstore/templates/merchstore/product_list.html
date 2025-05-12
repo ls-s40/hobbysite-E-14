@@ -8,11 +8,31 @@
 </head>
 {% block content %}
     <h1>Merchandise Store</h1>
+
+    <h2>Your Products</h2>
+    {% if user_products %}
         <ul>
-            {% for product in object_list %}
-            <li>
-                <a href="{{product.get_absolute_url}}">{{product.name}}</a>
-            </li>
+            {% for product in user_products %}
+                <li><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></li>
             {% endfor %}
         </ul>
+    {% else %}
+        <p>You have not posted any products yet.</p>
+    {% endif %}
+
+    <hr>
+
+    <h2>All Products</h2>
+    {% if other_products %}
+        <ul>
+            {% for product in other_products %}
+                <li><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>No other products available.</p>
+        {% endif %}
+
+    <hr>
+    <a href="{% url 'merchstore:product-create' %}">Create a new product</a>
 {% endblock %}
