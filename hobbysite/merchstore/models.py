@@ -94,3 +94,9 @@ class Transaction(models.Model):
         choices=TRANSACTION_STATUS_CHOICES,
     )
     created_on=models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        """Presents Transaction instances as human-readable representations."""
+        product_name = self.product.name if self.product else "Unknown Product"
+        buyer_name = self.buyer.display_name if self.buyer else "Unknown Buyer"
+        return f"{self.amount} x {product_name} by {buyer_name}"
