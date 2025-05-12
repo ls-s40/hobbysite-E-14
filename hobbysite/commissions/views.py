@@ -9,17 +9,9 @@ from django.urls import reverse
 
 
 def commission_list(request):
-    """
     commissions = Commission.objects.all()
     for commission in commissions:
-        jobs = Job.objects.filter(commission=commission)
-        for job in jobs:
-            job_accepted = JobApplication.objects.filter(job=job, status='Accepted').count()
-            if job_accepted >= job.manpower_required and job.status != 'Full':
-            job.status = 'Full'
-            job.save()
-    """
-
+        commission.update_status()
     
     status_order = ['Open', 'Full', 'Completed', 'Discontinued']
     commissions = sorted(
@@ -49,25 +41,11 @@ def commission_detail(request, pk):
     for job in jobs:
         total_manpower += job.manpower_required
         total_accepted += JobApplication.objects.filter(job=job, status='Accepted').count()
-        job_accepted = JobApplication.objects.filter(job=job, status='Accepted').count()
-        job.slots = job.manpower_required - job_accepted
+        job.slots = job.count_job_slots()
+        job.update_status()
 
-        # checks the status of the job
-        if job_accepted >= job.manpower_required and job.status != 'Full':
-            job.status = 'Full'
-            job.save()
-
-        print(job)
-        print(job.status)
-        print()
     open_manpower = total_manpower - total_accepted
-
-    """
-    # sets the commission status to full. kaso yung problema is para magupdate yung status ng commission, dapat pumunta muna sa detail view
-    if open_manpower == 0:
-        commission.status = 'Full'
-        commission.save()
-    """
+    commission.update_status()
 
     if request.method == 'POST' and request.user.is_authenticated:
         job = get_object_or_404(Job, id=request.POST.get('job_id'))

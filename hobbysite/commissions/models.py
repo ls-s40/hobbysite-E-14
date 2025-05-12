@@ -29,11 +29,19 @@ class Commission(models.Model):
     def get_absolute_url(self):
         """Returns the absolute URL for a commission"""
         return reverse('commissions:commissions_detail', args=[str(self.id)])
-
-    """
+    
     def update_status(self):
-        jobs = self.job_set
-    """
+        jobs = self.job_set.all()
+        total_accepted = 0
+        total_manpower = 0
+
+        for job in jobs:
+            total_accepted += job.jobapplication_set.filter(status='Accepted').count()
+            total_manpower += job.manpower_required
+
+        if total_accepted >= total_manpower:
+            self.status = 'Full'
+            self.save()
 
 
 class Job(models.Model):
@@ -48,7 +56,6 @@ class Job(models.Model):
     manpower_required = models.PositiveIntegerField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Open')
 
-    # BAKA MALI
     class Meta:
         ordering = [
             models.Case(
@@ -62,6 +69,15 @@ class Job(models.Model):
 
     def __str__(self):
         return f"{self.role} for {self.commission.title}"
+
+    def update_status(self):
+        accepted = self.jobapplication_set.filter(status='Accepted').count()
+        if accepted >= self.manpower_required and self.status != 'Full':
+            self.status = 'Full'
+            self.save()
+
+    def count_job_slots(self):
+        return self.manpower_required - self.jobapplication_set.filter(status='Accepted').count()
 
 
 class JobApplication(models.Model):
