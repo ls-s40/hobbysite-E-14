@@ -10,12 +10,13 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseForbidden
 from collections import defaultdict
 from .models import Product, Transaction
 from .forms import TransactionForm
 
 
-class ProductListView(LoginRequiredMixin, ListView):
+class ProductListView(ListView):
     """Class-based view for the merchstore product list page."""
 
     model = Product
@@ -24,17 +25,23 @@ class ProductListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user_profile = self.request.user.profile
 
-        # Products owned by user
-        context['user_products'] = Product.objects.filter(owner=user_profile)
+        user = self.request.user
+        if user.is_authenticated:
+            user_profile = user.profile
 
-        # Products NOT owned by user
-        context['other_products'] = Product.objects.exclude(owner=user_profile)
+            # Products owned by user
+            context['user_products'] = Product.objects.filter(owner=user_profile)
+
+            # Products NOT owned by user
+            context['other_products'] = Product.objects.exclude(owner=user_profile)
+        else:
+            context['user_products'] = None
+            context['other_products'] = Product.objects.all()
 
         return context
 
-class ProductDetailView(LoginRequiredMixin, DetailView):
+class ProductDetailView(DetailView):
     """Class-based view for the merchstore product detail page."""
 
     model = Product
@@ -44,13 +51,13 @@ class ProductDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         """Adds extra context for transaction form and stock check."""
         context = super().get_context_data(**kwargs)
-        product = context ['product']
+        product = context['product']
 
         # Add transaction form
         context['transaction_form'] = TransactionForm()
 
         # Check if current user is the owner
-        context['is_owner'] = product.owner == self.request.user.profile
+        context['is_owner'] = self.request.user.is_authenticated and (product.owner == self.request.user.profile)
 
         # Disable buy button if stock is 0
         context['disable_buy_button'] = product.stock == 0
@@ -59,31 +66,36 @@ class ProductDetailView(LoginRequiredMixin, DetailView):
 
     def post(self, request, *args, **kwargs):
         """Handles transaction form submission."""
-        product = self.get_object()
-        if product.owner == request.user.profile:
-            messages.error(request, "You cannot purchase your own product.")
-            return redirect('merchstore:product-detail', pk=product.pk)
-        
+        self.object = self.get_object()
+        product = self.object
         form = TransactionForm(request.POST)
+
+        if not request.user.is_authenticated:
+            return redirect(f"{reverse_lazy('login')}?next={request.path}")
+
+        if product.owner == request.user.profile:
+            return HttpResponseForbidden("You cannot buy your own product.")
+
         if form.is_valid():
+            amount = form.cleaned_data['amount']
+
+            if product.stock < amount:
+                form.add_error('amount', 'Not enough stock available.')
+                return self.render_to_response(self.get_context_data(transaction_form=form))
+
             transaction = form.save(commit=False)
             transaction.buyer = request.user.profile
             transaction.product = product
-            transaction.amount = form.cleaned_data['amount']
+            transaction.status = 'on_cart'
+            transaction.save()
             
             # Update stock
-            product.stock -= transaction.amount
+            product.stock -= amount
             product.save()
 
-            # Redirect according to login status
-            if request.user.is_authenticated:
-                transaction.save()
-                return redirect('merchstore:cart')
-            else:
-                messages.info(request, "Please log in to complete your purchase.")
-                return redirect('login')
+            return redirect('merchstore:cart')
         else:
-            return render(request, 'merchstore/product-detail.html', {'product': product, 'transaction_form': form})
+            return self.render_to_response(self.get_context_data(transaction_form=form))
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
@@ -97,7 +109,6 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         'price',
         'stock',
         'status',
-        'product_type'
     ]
     success_url = reverse_lazy('merchstore:index')
 
@@ -118,7 +129,6 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         'price',
         'stock',
         'status',
-        'product_type'
     ]
     success_url = reverse_lazy('merchstore:index')
 
@@ -131,7 +141,7 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         """Sets status based on stock."""
-        if form.cleaned_date['stock'] == 0:
+        if form.cleaned_data['stock'] == 0:
             form.instance.status = 'out_of_stock'
         else:
             form.instance.status = 'available'

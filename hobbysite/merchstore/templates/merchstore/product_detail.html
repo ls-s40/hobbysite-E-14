@@ -23,4 +23,14 @@
         {% if is_owner %}
                 <a href="{% url 'merchstore:product-edit' pk=product.pk %}">Update Product</a>
         {% endif %}
+
+        {% if transaction_form.errors %}
+                <ul class="errorlist">
+                        {% for field in transaction_form %}
+                                {% for error in field.errors %}
+                                        <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
+                        {% endfor %}
+                </ul>
+        {% endif %}
 {% endblock %}
