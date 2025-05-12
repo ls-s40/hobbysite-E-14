@@ -34,7 +34,6 @@ def articles_list(request):
 
     return render(request, 'wiki/articles_list.html', ctx)
 
-
 def article_detail(request, id):
     """Query article details and render it as html page."""
 
@@ -63,6 +62,7 @@ def article_detail(request, id):
         }
     return render(request, 'wiki/article_detail.html', ctx)
 
+@login_required
 def article_create(request):
     """Query article details and render it as html page."""
     if request.method == 'POST':
@@ -78,7 +78,8 @@ def article_create(request):
             'articleForm' : articleForm
         }
     return render(request, 'wiki/article_create.html', ctx)
-    
+
+@login_required
 def article_update(request, id):
     article = Article.objects.get(id=id)
     if request.method == 'POST':
