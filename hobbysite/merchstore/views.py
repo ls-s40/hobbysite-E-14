@@ -139,7 +139,7 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class CartView(LoginRequiredMixin, TemplateView):
-    """Shows all Transactions made by the logged-in user."""
+    """Shows all Transactions made by the logged-in user as the buyer."""
     template_name = 'merchstore/cart.html'
 
     def get_context_data(self, **kwargs):
@@ -152,6 +152,25 @@ class CartView(LoginRequiredMixin, TemplateView):
         for tn in transactions:
             owner = tn.product.owner if tn.product else None
             grouped_transactions[owner].append(tn)
+        
+        context['grouped_transactions'] = dict(grouped_transactions)
+        return context
+
+
+class TransactionsListView(LoginRequiredMixin, TemplateView):
+    """Shows all Transactions made by the logged-in user as the seller."""
+    template_name = 'merchstore/transactions_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_profile = self.request.user.profile
+
+        transactions = Transaction.objects.select_related('product__owner', 'buyer').filter(product__owner=user_profile)
+
+        grouped_transactions = defaultdict(list)
+        for tn in transactions:
+            buyer = tn.buyer
+            grouped_transactions[buyer].append(tn)
         
         context['grouped_transactions'] = dict(grouped_transactions)
         return context
