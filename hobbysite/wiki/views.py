@@ -55,7 +55,9 @@ def article_detail(request, id):
             category=article.category
         ).exclude(id=article.id)[:3]
         comment_form = CommentForm()
-        comments = Comment.objects.filter(article__id=id).order_by('-created_on')
+        comments = Comment.objects.filter(article__id=id).order_by(
+            '-created_on'
+        )
         ctx = {
             'article': article,
             'related_articles': related_articles,
@@ -91,7 +93,9 @@ def article_update(request, id):
     """Update an existing article and render the update page."""
     article = Article.objects.get(id=id)
     if request.method == 'POST':
-        article_form = ArticleForm(request.POST, request.FILES, instance=article)
+        article_form = ArticleForm(
+            request.POST, request.FILES, instance=article
+        )
         if article_form.is_valid():
             article_form.save()
             return redirect(article.get_absolute_url())
