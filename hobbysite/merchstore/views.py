@@ -6,6 +6,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.core.exceptions import PermissionDenied
 from .models import Product
 
 
@@ -68,6 +69,13 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         'product_type'
     ]
     success_url = reverse_lazy('merchstore:index')
+
+    def dispatch(self, request, *args, **kwargs):
+        """Limits update access to Product owner."""
+        product = self.get_object()
+        if product.owner != request.user.profile:
+            raise PermissionDenied("You do not have permission to edit this product.")
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         """Sets status based on stock."""
