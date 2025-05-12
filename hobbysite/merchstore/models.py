@@ -11,8 +11,10 @@ class ProductType(models.Model):
     description = models.TextField()
 
     class Meta:
+        """Sorts ProductTypes by name in ascending order."""
+
         ordering = ['name']
-    
+
     def __str__(self):
         """Presents ProductType instances as human-readable representations."""
         return self.name
@@ -21,7 +23,7 @@ class ProductType(models.Model):
 class Product(models.Model):
     """Represents a Product Model."""
 
-    PRODUCT_STATUS_CHOICES=[
+    PRODUCT_STATUS_CHOICES = [
         ('available', 'Available'),
         ('on_sale', 'On sale'),
         ('out_of_stock', 'Out of stock'),
@@ -43,7 +45,7 @@ class Product(models.Model):
         null=True,
         editable=False
     )
-    owner=models.ForeignKey(
+    owner = models.ForeignKey(
         'user_management.Profile',
         on_delete=models.CASCADE,
         related_name='products',
@@ -51,7 +53,7 @@ class Product(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        """Sets status to 'out_of_stock' when stock is 0."""
+        """Set status to 'out_of_stock' when stock is 0."""
         if self.stock == 0:
             self.status = 'out_of_stock'
         super().save(*args, **kwargs)
@@ -68,7 +70,7 @@ class Product(models.Model):
 class Transaction(models.Model):
     """Represents a Transaction Model."""
 
-    TRANSACTION_STATUS_CHOICES=[
+    TRANSACTION_STATUS_CHOICES = [
         ('on_cart', 'On cart'),
         ('to_pay', 'To Pay'),
         ('to_ship', 'To Ship'),
@@ -93,7 +95,7 @@ class Transaction(models.Model):
         max_length=20,
         choices=TRANSACTION_STATUS_CHOICES,
     )
-    created_on=models.DateTimeField(auto_now_add=True, null=True)
+    created_on = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         """Presents Transaction instances as human-readable representations."""

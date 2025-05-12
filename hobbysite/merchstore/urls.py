@@ -1,7 +1,8 @@
 """This file manages the URLs for the merchstore app."""
 
 from django.urls import path
-from .views import ProductListView, ProductDetailView, ProductCreateView, ProductUpdateView, CartView, TransactionsListView
+from .views import ProductListView, ProductDetailView, ProductCreateView,
+                    ProductUpdateView, CartView, TransactionsListView
 
 urlpatterns = [
     path('items/', ProductListView.as_view(), name='index'),
