@@ -1,5 +1,6 @@
 """This file manages the views for the merchstore app."""
 
+from django.views.generic import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
@@ -9,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.core.exceptions import PermissionDenied
+from collections import defaultdict
 from .models import Product, Transaction
 from .forms import TransactionForm
 
@@ -104,6 +106,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         form.instance.owner = self.request.user.profile
         return super().form_valid(form)
 
+
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     """Allows logged-in users to update a Product."""
 
@@ -133,3 +136,22 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         else:
             form.instance.status = 'available'
         return super().form_valid(form)
+
+
+class CartView(LoginRequiredMixin, TemplateView):
+    """Shows all Transactions made by the logged-in user."""
+    template_name = 'merchstore/cart.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_profile = self.request.user.profile
+
+        transactions = Transaction.objects.select_related('product__owner').filter(buyer=user_profile)
+
+        grouped_transactions = defaultdict(list)
+        for tn in transactions:
+            owner = tn.product.owner if tn.product else None
+            grouped_transactions[owner].append(tn)
+        
+        context['grouped_transactions'] = dict(grouped_transactions)
+        return context
