@@ -15,6 +15,7 @@ class ThreadCategory(models.Model):
     description = models.TextField()
 
     class Meta:
+        """Defines sorting for model instances"""
         ordering = ['name']
 
     def __str__(self):
@@ -30,7 +31,8 @@ class Thread(models.Model):
     """Defines the Thread model."""
 
     title = models.CharField(max_length=255)
-    author = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='thread_author' )
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE,
+                               related_name='thread_author')
     category = models.ForeignKey(ThreadCategory,
                                 on_delete=models.SET_NULL,
                                 null=True)
@@ -46,7 +48,7 @@ class Thread(models.Model):
     def get_absolute_url(self):
         """Return absolute url of Thread."""
         return reverse('forum:thread_detail', args=[str(self.id)])
-    
+
 
 class Comment(models.Model):
     """Defines the Comment model."""

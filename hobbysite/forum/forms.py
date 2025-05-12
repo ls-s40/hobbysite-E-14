@@ -3,6 +3,7 @@
 from django import forms
 from .models import Thread, Comment
 
+
 class ThreadForm(forms.ModelForm):
     """Defines form to create threads."""
 
@@ -11,6 +12,7 @@ class ThreadForm(forms.ModelForm):
 
         model = Thread
         fields = ['title', 'category', 'entry', 'image']
+
 
 class CommentForm(forms.ModelForm):
     """Defines form to create comments."""
@@ -21,5 +23,6 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['entry']
         widgets = {
-            'entry': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Write a comment...'})
+            'entry': forms.Textarea(attrs={'rows': 3, 
+                                           'placeholder': 'Write a comment...'})
         }
