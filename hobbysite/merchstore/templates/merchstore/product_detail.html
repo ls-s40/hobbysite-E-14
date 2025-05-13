@@ -1,15 +1,36 @@
 {% extends 'base.html' %}
 
-<head>
-        {% block styles %} 
-        {% endblock %}
-        {% block title %}{{object.name}}{% endblock %}
-    </head>
-
 {% block content %}
-        <h1>Merchandise Store</h1>
-        <h2>{{object.name}}</h2>
-        <h3>Product Type: {{object.product_type}}</h3>
-        <h4>Price: {{object.price}}</h4>
-        <h5>{{object.description}}</h5>
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.description }}</p>
+        <p>Price: PHP{{ product.price }}</p>
+        <p>Stock: {{ product.stock }}</p>
+
+        {% if disable_buy_button %}
+                <button type="button" disabled>Out of Stock</button>
+        {% else %}
+                {% if not is_owner %}
+                        <form method="post">
+                                {% csrf_token %}
+                                {{ transaction_form.as_p }}
+                                <button type="submit">Buy</button>
+                        </form>
+                {% else %}
+                        <p>You cannot purchase your own product.</p>
+                {% endif %}
+        {% endif %}
+
+        {% if is_owner %}
+                <a href="{% url 'merchstore:product-edit' pk=product.pk %}">Update Product</a>
+        {% endif %}
+
+        {% if transaction_form.errors %}
+                <ul class="errorlist">
+                        {% for field in transaction_form %}
+                                {% for error in field.errors %}
+                                        <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
+                        {% endfor %}
+                </ul>
+        {% endif %}
 {% endblock %}

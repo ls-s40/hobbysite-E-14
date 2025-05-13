@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Sales List</h2>
+
+    {% if grouped_transactions %}
+        {% for buyer, transactions in grouped_transactions.items %}
+            <h3>Buyer: {{ buyer.display_name }}</h3>
+            <ul>
+                {% for tn in transactions %}
+                    <li>
+                        {{ tn }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    {% else %}
+        <p>You have no sales transactions.</p>
+    {% endif %}
+
+    <a href="{% url 'merchstore:index' %}">Back to product list</a>
+{% endblock %}
