@@ -1,42 +1,104 @@
 {% extends 'base.html' %}
 
     <head>
-        <title>Task List</title>
         {% block styles %}
         <style>
-            table {
-                width: 55%;
-                padding-left: 4vw;
-                padding-top: 2.5vh;
+            .nav-container {
+                display: flex;
+                width: 100%;
+                height: 3rem;
+                justify-content: space-between;
+                align-items: center;
             }
-            td:first-child {
-                width: 14%;
+            .article-container {
+                padding: 4vh 8vw;
+                width: 80vw;
             }
-            td{
-                white-space: pre-line;
+            .article-category {
+                font-size: 1.25rem;
             }
-            #title {
-                font-weight: bold;
+            .article-title {
                 font-size: 4rem;
+                margin-top: 0px;
+                margin-bottom: 0px;
             }
-            #category{
-                font-size:1.5rem;
+            .article-detail {
+                font-size: 0.9rem;
             }
-            .gap-row{
-                height: 2vh;
+            .article-container > * {
+                margin-top: 2px;
+                margin-bottom: 0px;
+            }
+            button {
+                margin-top: 5px;
+            }
+            .header-image {
+                max-width: 70%;
+                max-height: 30vh;
+            }
+            .related-articles-container {
+                display: flex;
+                gap: 20px;
+            }
+            .comment-author {
+                font-weight: bold;
+            }
+            .comment-entry-container {
+                padding-left: 1rem;
+            }
+            .comment-detail {
+                font-size: 0.75rem;
+            }
+            textarea {
+                width: 60%; /* Or try 800px for fixed width */
             }
         </style>
         {% endblock %}
     </head>
     {% block content %}
-        <table>
-            <tbody> 
-                <tr><td id="category">{{article.category}}</td></tr>
-                <tr><td id="title" colspan="2">{{article.title}}</td></tr>
-                <tr><td>Published: </td><td>{{article.created_on}}</td></tr>
-                <tr><td>Last Updated:</td><td>{{article.updated_on}}</td></tr>
-                <tr class="gap-row"></tr>
-                <tr><td colspan="2">{{article.entry}}</td></tr>
-            </tbody>
-        </table>
+    <div class="article-container">
+        <div class="nav-container">
+            <a href="{% url 'wiki:index' %}">Go back to articles</a>
+            {% if user_is_author %}
+                <a href="{{article.get_absolute_url}}edit"><button>Edit article</button></a>
+            {% endif %}
+        </div>
+        <br>
+        {% if article.header_image %}
+            <img class="header-image" src="{{ article.header_image.url }}" alt="{{ article.name }}">
+        {% endif %}
+        <p class="article-category">{{article.category}}</p>
+        <h1 class="article-title">{{article.title}}</h1>
+        <p class="article-detail">By </td><td>{{article.author}}</p>
+        <br><br>
+        <p>{{article.entry}}</p>
+        <br><br>
+        <p class="article-detail">Last Updated: {{article.updated_on}}</p>
+        <p class="article-detail">Published: {{article.created_on}}</p>
+        <br><br>
+        <h3>Read more {{article.category}}</h3>
+        <div class="related-articles-container">
+            {% for related_article in related_articles %}
+                <a href="{{related_article.get_absolute_url}}"><p>{{related_article.title}}</p></a>
+            {% endfor %}
+        </div>
+        {% if user_is_authenticated %}
+            <form method="post">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                <button type="submit">Submit</button>
+            </form>
+        {% endif %}
+        <br>
+        <h3>Comments</h3>
+        <br>
+        {% for comment in comments %}
+            <p class="comment-author">{{comment.author}}</p>
+            <p class="comment-detail">Created on: {{comment.created_on}}</p>
+            <p class="comment-detail">Last updated: {{comment.updated_on}}</p>
+            <div class="comment-entry-container">
+                <p>{{comment.entry}}</p>
+            </div>
+        {% endfor %}
+    </div>
     {% endblock %}

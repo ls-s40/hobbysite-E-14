@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+    <head>
+        {% block styles %}
+        <style>
+            .container {
+                padding-left: 4vw;
+            }
+        </style>
+        {% endblock %}
+    </head>
+    {% block content %}
+    <div class="container">
+        <h2>
+            Create an article
+        </h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ article_form.as_p }}
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    {% endblock %}
