@@ -28,6 +28,12 @@
             margin-bottom: 1px;
             margin-top: 1px;
         }
+        .user-articles, .all-articles {
+            margin-top: 20px;
+        }
+        .create-article {
+            margin-bottom: 20px;
+        }
     </style>
     {% endblock %}
 </head>
@@ -35,30 +41,55 @@
     <div class="container">
         <header>
             <h1>Blog Articles</h1>
+            {% if user.is_authenticated %}
+                <div class="create-article">
+                    <a href="{% url 'blog:article_create' %}"><button>Create New Article</button></a>
+                </div>
+            {% endif %}
         </header>
         <main>
-            {% for category in categories %}
-                <section>
-                    <h2>{{ category.name }}</h2>
-                    <div class="description">
-                        {{ category.description }}
-                    </div>
-                    {% if category.articles.all %}
+            {% if user.is_authenticated %}
+                <section class="user-articles">
+                    <h2>Your Articles</h2>
+                    {% if user_articles %}
                         <ul>
-                            {% for article in category.articles.all %}
+                            {% for article in user_articles %}
                                 <li>
-                                    <a href="{% url 'blog:article_detail' article.id %}"> {{ article.title }}</a>
+                                    <a href="{% url 'blog:article_detail' article.id %}">{{ article.title }}</a>
                                     <small>(Created on: {{ article.created_on|date:"Y-m-d H:i" }})</small>
                                 </li>
                             {% endfor %}
                         </ul>
                     {% else %}
-                        <p>No articles in this category.</p>
+                        <p>You have not created any articles yet.</p>
                     {% endif %}
                 </section>
-            {% empty %}
-                <p>No categories available.</p>
-            {% endfor %}
+            {% endif %}
+
+            <section class="all-articles">
+                <h2>All Articles</h2>
+                {% for category in categories %}
+                    <section>
+                        <h3>{{ category.name }}</h3>
+                        {% if category.articles.all %}
+                            <ul>
+                                {% for article in category.articles.all %}
+                                    {% if not user.is_authenticated or article.author != user.profile %}
+                                        <li>
+                                            <a href="{% url 'blog:article_detail' article.id %}">{{ article.title }}</a>
+                                            <small>(Created on: {{ article.created_on|date:"Y-m-d H:i" }})</small>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>No articles in this category.</p>
+                        {% endif %}
+                    </section>
+                {% empty %}
+                    <p>No categories available.</p>
+                {% endfor %}
+            </section>
         </main>
     </div>
 {% endblock %}

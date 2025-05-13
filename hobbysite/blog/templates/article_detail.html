@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ article.title }}</title>
+    <title>
+    {% if article %}
+        {{ article.title }}
+    {% else %}
+        Create Article
+    {% endif %}
+</title>
     {% block styles %}
     <style>
         .container {
@@ -35,30 +41,106 @@
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
+        .comments {
+            margin-top: 40px;
+        }
+        .related-articles {
+            margin-top: 40px;
+        }
     </style>
     {% endblock %}
 </head>
 {% block content %}
-    <div class="container">
+<div class="container">
+    {% if is_editing %}
+        <h1>{% if article %}Edit Article{% else %}Create Article{% endif %}</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="title">Title:</label>
+            <input type="text" name="title" id="title" value="{{ article.title|default:'' }}" required><br>
+
+            <label for="category">Category:</label>
+            <select name="category" id="category">
+                <option value="">-- Select Category --</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if article and article.category.id == category.id %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select><br>
+
+            <label for="entry">Entry:</label>
+            <textarea name="entry" id="entry" rows="10" required>{{ article.entry|default:'' }}</textarea><br>
+
+            <label for="header_image">Header Image:</label>
+            <input type="file" name="header_image" id="header_image"><br>
+
+            <button type="submit">Save</button>
+        </form>
+        {% if article %}
+        <form method="post" style="margin-top: 20px;">
+            {% csrf_token %}
+            <input type="hidden" name="delete" value="true">
+            <button type="submit" style="background-color: red; color: white;">Delete Article</button>
+        </form>
+        {% endif %}
+    {% else %}
         <header>
             <h1>{{ article.title }}</h1>
             <h2>
+                Author: {{ article.author.display_name }} <br>
                 Category: {{ article.category.name }} <br>
                 Last updated: {{ article.updated_on|date:"Y-m-d H:i" }}
             </h2>
         </header>
         <main>
+            {% if article.header_image %}
+                <img src="{{ article.header_image.url }}" alt="Header Image" style="max-width: 100%; height: auto; margin-bottom: 20px;">
+            {% endif %}
             <div class="entry">
                 {{ article.entry|linebreaks }}
             </div>
             <h3>
                 Created on: {{ article.created_on|date:"Y-m-d H:i" }}
             </h3>
+            {% if request.user.is_authenticated and article.author == request.user.profile %}
+                <a href="{% url 'blog:article_update' article.id %}">Edit Article</a>
+            {% endif %}
         </main>
-        <footer>
-            <p>
-                <a href="{% url 'blog:article_list' %}">Return to the list of articles</a>
-            </p>
-        </footer>
-    </div>
+        <section class="related-articles">
+            <h2>Related Articles by {{ article.author.display_name }}</h2>
+            <ul>
+                {% for related_article in related_articles %}
+                    <li><a href="{% url 'blog:article_detail' related_article.id %}">{{ related_article.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </section>
+        <section class="comments">
+            <h2>Comments</h2>
+            {% if request.user.is_authenticated %}
+                <h3>Leave a Comment</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <textarea name="entry" rows="4" cols="50" placeholder="Write your comment here..." required></textarea><br>
+                    <button type="submit">Submit</button>
+                </form>
+            {% else %}
+                <p><a href="{% url 'login' %}">Log in</a> to leave a comment.</p>
+            {% endif %}
+            <ul>
+                {% for comment in comments %}
+                    <li>
+                        <strong>{{ comment.author.display_name }}:</strong> {{ comment.entry }}
+                        <br><small>{{ comment.created_on }}</small>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% endif %}
+    <footer>
+        <p>
+            <a href="{% url 'blog:index' %}">Return to the list of articles</a>
+        </p>
+    </footer>
+</div>
 {% endblock %}
