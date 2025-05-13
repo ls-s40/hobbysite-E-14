@@ -1,3 +1,4 @@
+"""This file contains the URL patterns for the accounts app."""
 from django.urls import path
 from .views import register_view
 
