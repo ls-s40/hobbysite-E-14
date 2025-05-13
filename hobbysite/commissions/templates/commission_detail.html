@@ -8,17 +8,44 @@
 </head>
 {% block content %}
     <h1>{{ commission.title }}</h1>
+    <p><strong>Status:</strong> {{ commission.status }}</p>
     <p><strong>Description:</strong> {{ commission.description }}</p>
-    <p><strong>People Required:</strong> {{ commission.people_required }}</p>
+    <p><strong>Author:</strong> {{ commission.author }}</p>
     <p><strong>Created On:</strong> {{ commission.created_on }}</p>
     <p><strong>Last Updated:</strong> {{ commission.updated_on }}</p>
 
-    <h2>Comments</h2>
+    <hr>
+    <h2>Jobs</h2>
     <ul>
-        {% for comment in commission.comment_set.all %}
-            <li>{{ comment.entry }} (Posted on {{ comment.created_on }})</li>
-        {% empty %}
-            <li>No comments yet.</li>
+        {% for job in jobs %}
+            <li>
+                <strong>{{ job.role }}</strong><br>
+                Manpower Required: {{ job.manpower_required }}<br>
+                Slots Left: {{ job.slots }}<br>
+
+                {% if user.is_authenticated %}
+                    {% if job.status == 'Full' %}
+                        <button disabled>Full</button>
+                    {% else %}
+                        <form method="post" action="{% url 'commissions:commissions_detail' commission.pk %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="job_id" value="{{ job.id }}">
+                            <button type="submit">Apply to Job</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </li>
         {% endfor %}
     </ul>
+    
+    <p><strong>Manpower Required:</strong> {{ total_manpower }}</p>
+    <p><strong>Open Manpower:</strong> {{ open_manpower }}</p>
+
+    {% if user == commission.author.user %}
+        <a href="{% url 'commissions:commissions_update' commission.id %}">Edit Commission</a>
+    {% endif %}
+<hr>
+<a href="{% url 'commissions:index' %}">
+    <button type="button">Back to List</button>
+</a>
 {% endblock %}
