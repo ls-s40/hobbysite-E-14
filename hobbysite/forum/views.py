@@ -8,15 +8,21 @@ from .forms import ThreadForm, CommentForm
 
 # Create your views here.
 
-@login_required
+
 def thread_list(request):
     """Return render of list view page using PostCategory model."""
     threadcategories = ThreadCategory.objects.all().order_by('name')
 
-    current_user = Profile.objects.get(user=request.user)
-    user_threads = Thread.objects.filter(author=current_user).order_by('-created_on')
+    user_threads = None
+    all_threads = Thread.objects.all().select_related('category').order_by('-created_on')
 
-    all_threads = Thread.objects.exclude(author=current_user).select_related('category')
+    if request.user.is_authenticated:
+        try:
+            current_user = Profile.objects.get(user=request.user)
+            user_threads = Thread.objects.filter(author=current_user).order_by('-created_on')
+            all_threads = all_threads.exclude(author=current_user)
+        except Profile.DoesNotExist:
+            pass
 
 
     ctx = {
@@ -27,7 +33,7 @@ def thread_list(request):
 
     return render(request, 'forum/thread_list.html', ctx)
 
-@login_required
+
 def thread_detail(request, id):
     """Return render of detail view page using Thread and ThreadCateogry models."""
     thread = get_object_or_404(Thread, id=id)
