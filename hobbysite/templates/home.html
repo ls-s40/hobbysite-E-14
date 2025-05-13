@@ -3,29 +3,30 @@
 {% block title %}Home - HOBBYSITE{% endblock %}
 
 {% block content %}
+<div class="container mt-4">
     {% if user.is_authenticated %}
-        <h2>Welcome to HOBBYSITE, {{ user.username }}!</h2>
+        <h2 class="mb-3">Welcome to HOBBYSITE, {{ user.username }}!</h2>
     {% else %}
-        <h2>Welcome to HOBBYSITE!</h2>
+        <h2 class="mb-3">Welcome to HOBBYSITE!</h2>
         <p>Please <a href="{% url 'login' %}">log in</a> or <a href="{% url 'accounts:register' %}">register</a>.</p>
     {% endif %}
-    <div class="nav-buttons">
+
+    <div class="d-flex flex-wrap gap-3 mb-4">
         {% if user.is_authenticated %}
-            <a href="profile/{{user.username}}"><button>Profile</button></a>
+            <a href="{% url 'user_management:profile_detail' user.username %}" class="btn btn-outline-primary">Profile</a>
         {% endif %}
-        <a href="blog/articles/"><button>Blogs</button></a>
-        <a href="commissions/list"><button>Commissions</button></a>
-        <a href="forum/threads"><button>Forums</button></a>
-        <a href="merchstore/items"><button>Merchandise</button></a>
-        <a href="wiki/articles"><button>Wiki</button></a>
+        <a href="{% url 'blog:index' %}" class="btn btn-outline-secondary">Blogs</a>
+        <a href="{% url 'commissions:index' %}" class="btn btn-outline-success">Commissions</a>
+        <a href="{% url 'forum:index' %}" class="btn btn-outline-info">Forums</a>
+        <a href="{% url 'merchstore:index' %}" class="btn btn-outline-warning">Merchandise</a>
+        <a href="{% url 'wiki:index' %}" class="btn btn-outline-dark">Wiki</a>
     </div>
-    <br></br>
+
     {% if user.is_authenticated %}
-        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+        <form action="{% url 'logout' %}" method="post" class="d-inline">
             {% csrf_token %}
-            <button type="submit">Logout</button>
+            <button type="submit" class="btn btn-danger">Logout</button>
         </form>
     {% endif %}
-
-
+</div>
 {% endblock %}
