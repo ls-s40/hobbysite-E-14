@@ -19,18 +19,28 @@
 {% block content %}
     <h1>Threads</h1>
 
-    <table>
-        <thead>
-           <tr>
-                <th>Thread</th>
-                <th>Description</th>
-            </tr> 
-        </thead>
-        {% for category in postcategories %}
-        <tr>
-            <td><a href="{{category.get_absolute_url}}">{{category.name}}</a></td>
-            <td>{{category.description}}</td>
-        </tr>
+    {% if user_threads %}
+    <h2>Your Threads</h2>
+    <ul>
+        {% for thread in user_threads %}
+        <li><a href="{% url 'forum:thread_detail' thread.id %}">{{ thread.title }}</a></li>
         {% endfor %}
-    </table>
+    </ul>
+    {% endif %}
+
+    <h2>All Threads</h2>
+
+    {% for category in threadcategories %}
+        <h3>{{ category.name }}</h3>
+        <ul>
+        {% for thread in all_threads %}
+            {% if thread.category == category %}
+            <li><a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a></li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+    {% endfor %}
+
+    <a href="{% url 'forum:create_thread' %}">Create New Thread</a>
+
 {% endblock %}

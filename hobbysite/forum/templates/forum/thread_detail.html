@@ -17,27 +17,72 @@
 </head>
 
 {% block content %}
-    <h1>{{category}}</h1>
+    <h1>{{ thread.title }}</h1>
+    <p><strong>Author:</strong> {{ thread.author.user.username }}</p>
+    <p><strong>Category:</strong> {{ thread.category.name }}</p>
+    <p><strong>Created on:</strong> {{ thread.created_on|date:"F j, Y, g:i a" }}</p>
+    <p><strong>Last updated:</strong> {{ thread.updated_on|date:"F j, Y, g:i a" }}</p>
 
-    {% for post in posts %}
+    <div>
+        <br>
+        <p>{{ thread.entry|linebreaks }}</p>
+        <br>
+        {% if thread.image %}
+        <img src="{{ thread.image.url }}" alt="{{ thread.title }}" style="max-width: 200px; height: auto;">
+        {% endif %}
+        <br>
+    </div>
 
-    <table>
-        <thead>
-            <th colspan="2">{{post.title}}</th>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Created on: {{post.created_on}}</td>
-                <td>Last Updated: {{post.updated_on}}</td>
-            </tr>
-            <tr>
-                <td colspan="2">{{post.entry}}</td>
-            </tr>
-        </tbody>
-    </table>
+    
 
+    <h3>Comments</h3>
+
+
+    <div>
+    {% if comments %}
+    <ul>
+        {% for comment in comments %}
+        <li>
+            <strong>{{ comment.author.display_name|default:comment.author.user.username }}</strong>
+            <i>{{ comment.created_on|date:"F j, Y, g:i a" }}</i><br>
+            {{ comment.entry|linebreaks }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No comments yet.</p>
+    {% endif %}
+    </div>
+
+    <div>
+    <h4>Add a Comment:</h4>
+    <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Post Comment</button>
+    </form>
     <br>
+    </div>
 
-    {% endfor %}
+    <div>
+    {% if other_threads %}
+    <h3>Related Threads:</h3>
+    <ul>
+        {% for thread in other_threads %}
+        <li><a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No related threads found.</p>
+    {% endif %}
+    <br>
+    </div>
+
+    {% if request.user.is_authenticated and thread.author.user == request.user %}
+    <a href="{% url 'forum:edit_thread' thread.id %}">Edit Thread</a>
+    {% endif %}
+
+
+    <p><a href="{% url 'forum:index' %}">Back to Threads</a></p>
 
 {% endblock %}

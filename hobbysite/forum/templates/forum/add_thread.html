@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+<head>
+    {% block styles %} 
+    <style>
+
+    </style>
+    {% endblock %}
+</head>
+
+{% block content %}
+    <h1>Create Thread</h1>
+
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Post Thread</button>
+    </form>
+
+{% endblock %}
