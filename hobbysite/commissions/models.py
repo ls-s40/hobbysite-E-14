@@ -21,16 +21,20 @@ class Commission(models.Model):
     updated_on = models.DateTimeField(auto_now=True)
 
     class Meta:
+        """
+        Metaclass for how the commissions are ordered
+        """
         ordering = ['created_on']
-    
+
     def __str__(self):
         return str(self.title)
 
     def get_absolute_url(self):
         """Returns the absolute URL for a commission"""
         return reverse('commissions:commissions_detail', args=[str(self.id)])
-    
+
     def update_status(self):
+        """Updates the status of the commission instance"""
         jobs = self.job_set.all()
         total_accepted = 0
         total_manpower = 0
@@ -57,6 +61,9 @@ class Job(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Open')
 
     class Meta:
+        """
+        Metaclass for how the jobs are ordered
+        """
         ordering = [
             models.Case(
                 models.When(status='Open', then=0),
@@ -71,12 +78,14 @@ class Job(models.Model):
         return f"{self.role} for {self.commission.title}"
 
     def update_status(self):
+        """Updates the status of the job instance"""
         accepted = self.jobapplication_set.filter(status='Accepted').count()
         if accepted >= self.manpower_required and self.status != 'Full':
             self.status = 'Full'
             self.save()
 
     def count_job_slots(self):
+        """Returns how many available slots are left for the job instance"""
         return self.manpower_required - self.jobapplication_set.filter(status='Accepted').count()
 
 
@@ -97,6 +106,9 @@ class JobApplication(models.Model):
         return f"{self.applicant.user.username} applied to {self.job.role}"
 
     class Meta:
+        """
+        Metaclass for how the job applications are ordered
+        """
         ordering = [
             models.Case(
                 models.When(status='Pending', then=0),

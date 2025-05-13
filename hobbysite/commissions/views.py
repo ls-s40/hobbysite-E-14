@@ -2,17 +2,19 @@
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Commission, Job, JobApplication
-from .forms import CommissionForm, JobForm, JobApplicationForm
 from django.forms import inlineformset_factory
-from django.urls import reverse
+from .models import Commission, Job, JobApplication
+from .forms import CommissionForm, JobForm
 
 
 def commission_list(request):
+    """
+    View for the commission list
+    """
     commissions = Commission.objects.all()
     for commission in commissions:
         commission.update_status()
-    
+
     status_order = ['Open', 'Full', 'Completed', 'Discontinued']
     commissions = sorted(
         Commission.objects.all(),
@@ -23,7 +25,9 @@ def commission_list(request):
     if request.user.is_authenticated:
         profile = request.user.profile
         user_commissions = Commission.objects.filter(author=profile)
-        applied_commissions = Commission.objects.filter(job__jobapplication__applicant=profile).distinct()
+        applied_commissions = Commission.objects.filter(
+            job__jobapplication__applicant=profile
+        ).distinct()
 
     return render(request, 'commission_list.html', {
         'commissions': commissions,
@@ -33,6 +37,9 @@ def commission_list(request):
 
 
 def commission_detail(request, pk):
+    """
+    View for the commission details
+    """
     commission = get_object_or_404(Commission, pk=pk)
     jobs = Job.objects.filter(commission=commission)
 
@@ -66,11 +73,14 @@ def commission_detail(request, pk):
 
 @login_required
 def commission_create(request):
-    JobFormSet = inlineformset_factory(Commission, Job, form=JobForm, extra=1, can_delete=False)
+    """
+    View for creating commissions. Being logged in is required to access this view
+    """
+    job_formset = inlineformset_factory(Commission, Job, form=JobForm, extra=1, can_delete=False)
 
     if request.method == 'POST':
         form = CommissionForm(request.POST)
-        formset = JobFormSet(request.POST, queryset=Job.objects.none())
+        formset = job_formset(request.POST, queryset=Job.objects.none())
 
         if form.is_valid():
             commission = form.save(commit=False)
@@ -87,7 +97,7 @@ def commission_create(request):
             return redirect('commissions:commissions_detail', pk=commission.pk)
     else:
         form = CommissionForm()
-        formset = JobFormSet(queryset=Job.objects.none())
+        formset = job_formset(queryset=Job.objects.none())
 
     return render(request, 'commission_form.html', {
         'form': form,
@@ -97,17 +107,20 @@ def commission_create(request):
 
 @login_required
 def commission_update(request, pk):
+    """
+    View for updating commissions. Being logged in is required to access this view
+    """
     commission = get_object_or_404(Commission, pk=pk)
-    JobFormSet = inlineformset_factory(Commission, Job, form=JobForm, extra=1, can_delete=False)
+    job_formset = inlineformset_factory(Commission, Job, form=JobForm, extra=1, can_delete=False)
 
     print(commission.status)
-    
+
     if commission.author != request.user.profile:
         return redirect('commissions:commissions_detail', pk=pk)
 
     if request.method == 'POST':
         form = CommissionForm(request.POST, instance=commission)
-        formset = JobFormSet(request.POST, instance=commission)
+        formset = job_formset(request.POST, instance=commission)
 
         if form.is_valid() and formset.is_valid():
             form.save()
@@ -118,10 +131,9 @@ def commission_update(request, pk):
             return redirect('commissions:commissions_detail', pk=pk)
     else:
         form = CommissionForm(instance=commission)
-        formset = JobFormSet(instance=commission)
+        formset = job_formset(instance=commission)
 
     return render(request, 'commission_form.html', {
         'form': form,
         'formset': formset
     })
-

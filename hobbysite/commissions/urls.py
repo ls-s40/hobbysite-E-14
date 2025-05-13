@@ -4,7 +4,7 @@ from django.urls import path
 from .views import commission_list, commission_detail, commission_create, commission_update
 
 
-app_name = "commissions"
+APP_NAME = "commissions"
 
 urlpatterns = [
     path('list/', commission_list, name='index'),
