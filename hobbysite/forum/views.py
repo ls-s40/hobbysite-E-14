@@ -33,7 +33,7 @@ def thread_detail(request, id):
     thread = get_object_or_404(Thread, id=id)
     category = thread.category
     other_threads = Thread.objects.filter(category=category).exclude(id=thread.id)
-    comments = thread.comments.all()
+    comments = thread.forum_comments.all()
 
     if request.method == 'POST':
         form = CommentForm(request.POST)
