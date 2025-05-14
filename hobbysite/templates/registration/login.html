@@ -1,13 +1,86 @@
 {% extends "base.html" %}
-{% block title %}Login{% endblock %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    {% block title %}Login{% endblock %}
+    {% block styles %}
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 1em;
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .links p {
+            margin: 10px 0;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    {% endblock %}
+</head>
 
 {% block content %}
-  <h2>Login</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Log In</button>
-  </form>
-  <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
-  <p>Don't have an account? <a href="{% url 'accounts:register' %}">Sign up here</a>.</p>
+<div class="container">
+    <h1>Login</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Log In</button>
+    </form>
+    <div class="links">
+        <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
+        <p>Don't have an account? <a href="{% url 'accounts:register' %}">Sign up here</a>.</p>
+    </div>
+</div>
 {% endblock %}
