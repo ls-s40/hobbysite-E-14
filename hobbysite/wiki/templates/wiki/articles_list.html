@@ -1,48 +1,96 @@
 {% extends 'base.html' %}
 
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Wiki Articles</title>
         {% block styles %} 
         <style>
-            .article-list-head {
-                padding-right: 1rem;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
+            .container {
+                max-width: 1200px;
+                margin: 40px auto;
+                padding: 20px;
+                background-color: #fff;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
             }
-            .main-container {
-                padding: 4vh 8vw;
+            h1 {
+                font-size: 2.5em;
+            }
+            h2 {
+                font-size: 1.5em;
+                color: #292929;
+                margin-bottom: 1px;
+                margin-top: 1px;
+            }
+            h3 {
+                font-size: 1.3em;
+                color: #444;
+                margin-top: 20px;
+            }
+            h4 {
+                font-size: 1.1em;
+                margin: 5px 0;
+            }
+            .description {
+                font-size: 1em;
+                color: #292929;
+                margin-bottom: 10px;
+            }
+            .user-articles, .all-articles {
+                margin-top: 20px;
+            }
+            .create-article {
+                margin-bottom: 20px;
             }
             .block {
-                padding-left: 4vw;
+                padding-left: 20px;
+                margin: 10px 0;
+            }
+            .article-item {
+                margin-bottom: 10px;
             }
         </style>
         {% endblock %}
     </head>
     {% block content %}
-        <div class="main-container">
-            <div class="article-list-head">
-                <h1>Wiki</h1>
-                <a href="{% url 'wiki:article_create' %}"><button>Create an article</button></a>
-            </div>
-            {% if user_articles %}
-                <h2>Your Articles</h2>
-                <div class="block"><div class="block">
-                    {% for user_article in user_articles %}
-                        <a href="{{user_article.get_absolute_url}}"><h4>{{user_article.title}}</h4></a>
-                    {% endfor %}
-                </div></div>
-            {% endif %}
-            <h2>All Articles</h2>
-            <div class="block">
-                {% for category in articles_categorized %}
-                    <h3>{{category.category_name}}</h3>
-                    <p>{{category.category_description}}</p>
-                    <div class="block">
-                        {% for article in category.articles %}
-                            <a href="{{article.get_absolute_url}}"><h4>{{article.title}}</h4></a>
-                        {% endfor %}
+        <div class="container">
+            <header>
+                <h1>Wiki Articles</h1>
+                {% if user.is_authenticated %}
+                    <div class="create-article">
+                        <a href="{% url 'wiki:article_create' %}"><button>Create an article</button></a>
                     </div>
-                {% endfor %}
-            </div>
+                {% endif %}
+            </header>
+            <main>
+                {% if user_articles %}
+                    <section class="user-articles">
+                        <h2>Your Articles</h2>
+                        <div class="block">
+                            {% for user_article in user_articles %}
+                                <div class="article-item">
+                                    <a href="{{user_article.get_absolute_url}}">{{user_article.title}}</a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endif %}
+                <section class="all-articles">
+                    <h2>All Articles</h2>
+                    {% for category in articles_categorized %}
+                        <div class="category-section">
+                            <h3>{{category.category_name}}</h3>
+                            <p class="description">{{category.category_description}}</p>
+                            <div class="block">
+                                {% for article in category.articles %}
+                                    <div class="article-item">
+                                        <a href="{{article.get_absolute_url}}">{{article.title}}</a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </section>
+            </main>
         </div>
     {% endblock %}

@@ -117,6 +117,16 @@
         </section>
         <section class="comments">
             <h2>Comments</h2>
+
+            <ul>
+                {% for comment in comments %}
+                    <li>
+                        <strong>{{ comment.author.display_name }}:</strong> {{ comment.entry }}
+                        <br><small>{{ comment.created_on }}</small>
+                    </li>
+                {% endfor %}
+            </ul>
+
             {% if request.user.is_authenticated %}
                 <h3>Leave a Comment</h3>
                 <form method="post">
@@ -127,14 +137,6 @@
             {% else %}
                 <p><a href="{% url 'login' %}">Log in</a> to leave a comment.</p>
             {% endif %}
-            <ul>
-                {% for comment in comments %}
-                    <li>
-                        <strong>{{ comment.author.display_name }}:</strong> {{ comment.entry }}
-                        <br><small>{{ comment.created_on }}</small>
-                    </li>
-                {% endfor %}
-            </ul>
         </section>
     {% endif %}
     <footer>

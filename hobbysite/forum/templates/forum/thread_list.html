@@ -1,46 +1,93 @@
 {% extends "base.html" %}
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum Threads</title>
     {% block styles %} 
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-
-        th, td {
-            border: 1px solid black;
-            padding: 10px;
+        h1 {
+            font-size: 2.5em;
+        }
+        h2 {
+            font-size: 1.5em;
+            color: #292929;
+            margin-bottom: 1px;
+            margin-top: 1px;
+        }
+        h3 {
+            font-size: 1.3em;
+            color: #444;
+            margin-top: 20px;
+        }
+        .description {
+            font-size: 1em;
+            color: #292929;
+            margin-bottom: 1px;
+            margin-top: 1px;
+        }
+        .user-threads, .all-threads {
+            margin-top: 20px;
+        }
+        .create-thread {
+            margin-bottom: 20px;
         }
     </style>
     {% endblock %}
 </head>
 
 {% block content %}
-    <h1>Threads</h1>
-
-    {% if user_threads %}
-    <h2>Your Threads</h2>
-    <ul>
-        {% for thread in user_threads %}
-        <li><a href="{% url 'forum:thread_detail' thread.id %}">{{ thread.title }}</a></li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-
-    <h2>All Threads</h2>
-
-    {% for category in threadcategories %}
-        <h3>{{ category.name }}</h3>
-        <ul>
-        {% for thread in all_threads %}
-            {% if thread.category == category %}
-            <li><a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a></li>
+    <div class="container">
+        <header>
+            <h1>Forum Threads</h1>
+            {% if user.is_authenticated %}
+                <div class="create-thread">
+                    <a href="{% url 'forum:create_thread' %}"><button>Create New Thread</button></a>
+                </div>
             {% endif %}
-        {% endfor %}
-        </ul>
-    {% endfor %}
+        </header>
+        <main>
+            {% if user.is_authenticated and user_threads %}
+            <section class="user-threads">
+                <h2>Your Threads</h2>
+                <ul>
+                    {% for thread in user_threads %}
+                    <li><a href="{% url 'forum:thread_detail' thread.id %}">{{ thread.title }}</a>
+                        <small>(Created on: {{ thread.created_on|date:"Y-m-d H:i" }})</small>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% endif %}
 
-    <a href="{% url 'forum:create_thread' %}">Create New Thread</a>
-
+            <section class="all-threads">
+                <h2>All Threads</h2>
+                
+                {% for category in threadcategories %}
+                    <section>
+                        <h3>{{ category.name }}</h3>
+                        <ul>
+                        {% for thread in all_threads %}
+                            {% if thread.category == category %}
+                            <li>
+                                <a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a>
+                                <small>(Created on: {{ thread.created_on|date:"Y-m-d H:i" }})</small>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                        </ul>
+                    </section>
+                {% empty %}
+                    <p>No categories available.</p>
+                {% endfor %}
+            </section>
+        </main>
+    </div>
 {% endblock %}

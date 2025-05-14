@@ -1,104 +1,166 @@
 {% extends 'base.html' %}
 
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{{ article.title }}</title>
         {% block styles %}
         <style>
-            .nav-container {
-                display: flex;
-                width: 100%;
-                height: 3rem;
-                justify-content: space-between;
-                align-items: center;
+            .container {
+                max-width: 1200px;
+                margin: 40px auto;
+                padding: 20px;
+                background-color: #fff;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
             }
-            .article-container {
-                padding: 4vh 8vw;
-                width: 80vw;
+            h1 {
+                font-size: 2.5em;
+                margin-bottom: 0.2em;
+            }
+            h2 {
+                font-size: 1.5em;
+                color: #444;
+                border-bottom: 2px solid #ddd;
+                padding-bottom: 10px;
+                margin-top: 30px;
+            }
+            h3 {
+                font-size: 1.3em;
+                color: #444;
+                margin-top: 30px;
+            }
+            .article-meta {
+                font-size: 0.8em;
+                color: #444;
+                border-bottom: 2px solid #ddd;
+                padding-bottom: 10px;
+            }
+            .entry {
+                line-height: 1.6;
+                margin: 20px 0;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
             }
             .article-category {
-                font-size: 1.25rem;
-            }
-            .article-title {
-                font-size: 4rem;
-                margin-top: 0px;
-                margin-bottom: 0px;
-            }
-            .article-detail {
-                font-size: 0.9rem;
-            }
-            .article-container > * {
-                margin-top: 2px;
-                margin-bottom: 0px;
-            }
-            button {
-                margin-top: 5px;
+                color: #666;
+                font-size: 1.1em;
+                margin-bottom: 5px;
             }
             .header-image {
-                max-width: 70%;
-                max-height: 30vh;
+                max-width: 100%;
+                height: auto;
+                margin: 20px 0;
+            }
+            .related-articles {
+                margin-top: 40px;
             }
             .related-articles-container {
                 display: flex;
+                flex-wrap: wrap;
                 gap: 20px;
+                margin-top: 10px;
+            }
+            .comments {
+                margin-top: 40px;
             }
             .comment-author {
                 font-weight: bold;
             }
             .comment-entry-container {
-                padding-left: 1rem;
+                padding-left: 20px;
+                margin-bottom: 20px;
             }
             .comment-detail {
-                font-size: 0.75rem;
+                font-size: 0.8em;
+                color: #666;
             }
             textarea {
-                width: 60%; /* Or try 800px for fixed width */
+                width: 100%;
+                max-width: 600px;
+                padding: 10px;
+            }
+            button {
+                padding: 8px 16px;
+                margin-top: 10px;
+                cursor: pointer;
+            }
+            .nav-container {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 20px;
             }
         </style>
         {% endblock %}
     </head>
     {% block content %}
-    <div class="article-container">
-        <div class="nav-container">
-            <a href="{% url 'wiki:index' %}">Go back to articles</a>
-            {% if user_is_author %}
-                <a href="{{article.get_absolute_url}}edit"><button>Edit article</button></a>
-            {% endif %}
-        </div>
-        <br>
-        {% if article.header_image %}
-            <img class="header-image" src="{{ article.header_image.url }}" alt="{{ article.name }}">
-        {% endif %}
-        <p class="article-category">{{article.category}}</p>
-        <h1 class="article-title">{{article.title}}</h1>
-        <p class="article-detail">By </td><td>{{article.author}}</p>
-        <br><br>
-        <p>{{article.entry}}</p>
-        <br><br>
-        <p class="article-detail">Last Updated: {{article.updated_on}}</p>
-        <p class="article-detail">Published: {{article.created_on}}</p>
-        <br><br>
-        <h3>Read more {{article.category}}</h3>
-        <div class="related-articles-container">
-            {% for related_article in related_articles %}
-                <a href="{{related_article.get_absolute_url}}"><p>{{related_article.title}}</p></a>
-            {% endfor %}
-        </div>
-        {% if user_is_authenticated %}
-            <form method="post">
-                {% csrf_token %}
-                {{ comment_form.as_p }}
-                <button type="submit">Submit</button>
-            </form>
-        {% endif %}
-        <br>
-        <h3>Comments</h3>
-        <br>
-        {% for comment in comments %}
-            <p class="comment-author">{{comment.author}}</p>
-            <p class="comment-detail">Created on: {{comment.created_on}}</p>
-            <p class="comment-detail">Last updated: {{comment.updated_on}}</p>
-            <div class="comment-entry-container">
-                <p>{{comment.entry}}</p>
+    <div class="container">
+        <header>
+            <div class="nav-container">
+                <a href="{% url 'wiki:index' %}">Return to Articles List</a>
+                {% if user_is_author %}
+                    <a href="{{article.get_absolute_url}}edit"><button>Edit article</button></a>
+                {% endif %}
             </div>
-        {% endfor %}
+            
+            <p class="article-category">{{article.category}}</p>
+            <h1>{{article.title}}</h1>
+            <div class="article-meta">
+                <p>By {{article.author}}</p>
+                <p>Last Updated: {{article.updated_on|date:"Y-m-d H:i"}}</p>
+                <p>Published: {{article.created_on|date:"Y-m-d H:i"}}</p>
+            </div>
+        </header>
+        
+        <main>
+            {% if article.header_image %}
+                <img class="header-image" src="{{ article.header_image.url }}" alt="{{ article.title }}">
+            {% endif %}
+            
+            <div class="entry">
+                {{article.entry|linebreaks}}
+            </div>
+            <section class="related-articles">
+                <h2>Read more {{article.category}}</h2>
+                <div class="related-articles-container">
+                    {% for related_article in related_articles %}
+                        <a href="{{related_article.get_absolute_url}}">{{related_article.title}}</a>
+                    {% endfor %}
+                </div>
+            </section>
+            
+            <section class="comments">
+                <h2>Comments</h2>
+                
+                <ul style="list-style-type: none; padding-left: 0;">
+                    {% for comment in comments %}
+                        <li style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                            <p class="comment-author">{{comment.author}}</p>
+                            <div class="comment-entry-container">
+                                <p>{{comment.entry|linebreaks}}</p>
+                            </div>
+                            <p class="comment-detail">
+                                Created on: {{comment.created_on|date:"Y-m-d H:i"}}
+                                {% if comment.updated_on != comment.created_on %}
+                                    | Last updated: {{comment.updated_on|date:"Y-m-d H:i"}}
+                                {% endif %}
+                            </p>
+                        </li>
+                    {% empty %}
+                        <p>No comments yet.</p>
+                    {% endfor %}
+                </ul>
+                
+                {% if user_is_authenticated %}
+                    <h3>Leave a Comment</h3>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ comment_form.as_p }}
+                        <button type="submit">Submit</button>
+                    </form>
+                {% else %}
+                    <p><a href="{% url 'login' %}">Log in</a> to leave a comment.</p>
+                {% endif %}
+            </section>
+        </main>
     </div>
     {% endblock %}
