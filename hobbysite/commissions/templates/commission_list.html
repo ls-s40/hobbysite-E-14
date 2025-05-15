@@ -4,46 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Commissions</title>
-    {% block styles %} {% endblock %}
+    {% block styles %}
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2.5em;
+        }
+        h2 {
+            font-size: 1.5em;
+            color: #292929;
+            margin-bottom: 1px;
+            margin-top: 1px;
+        }
+        h3 {
+            font-size: 1.3em;
+            color: #444;
+            margin-top: 20px;
+        }
+        .description {
+            font-size: 1em;
+            color: #292929;
+            margin-bottom: 1px;
+            margin-top: 1px;
+        }
+        .user-commissions, .applied-commissions, .all-commissions {
+            margin-top: 20px;
+        }
+        .create-commission {
+            margin-bottom: 20px;
+        }
+    </style>
+    {% endblock %}
 </head>
 {% block content %}
-    <h1>Commissions</h1>
-    <hr>
-    {% if user.is_authenticated %}
-        <h3>Your Commissions</h3>
-        <ul>
-            {% for commission in user_commissions %}
-                <li>
-                    <a href="{{ commission.get_absolute_url }}">{{ commission.title }}</a>
-                    (Status: {{ commission.status }}, Created: {{ commission.created_on|date:"Y-m-d" }})
-                </li>
-            {% empty %}
-                <li>You haven't created any commissions.</li>
-            {% endfor %}
-        </ul>
-        <h3>Applied Commissions</h3>
-        <ul>
-            {% for commission in applied_commissions %}
-                <li>
-                    <a href="{{ commission.get_absolute_url }}">{{ commission.title }}</a>
-                    (Status: {{ commission.status }}, Created: {{ commission.created_on|date:"Y-m-d" }})
-                </li>
-            {% empty %}
-                <li>You haven't applied to any jobs yet.</li>
-            {% endfor %}
-        </ul>
-        <p><a href="{% url 'commissions:commissions_create' %}">New Commission</a></p>
-    {% endif %}
-    <hr>
-    <h2>All Commissions</h2>
-    <ul>
-        {% for commission in commissions %}
-            <li>
-                <a href="{{ commission.get_absolute_url }}">{{ commission.title }}</a>
-                (Status: {{ commission.status }}, Created: {{ commission.created_on|date:"Y-m-d" }})
-            </li>
-        {% empty %}
-            <li>No commissions available.</li>
-        {% endfor %}
-    </ul>
+    <div class="container">
+        <header>
+            <h1>Commissions</h1>
+            {% if user.is_authenticated %}
+                <div class="create-commission">
+                    <a href="{% url 'commissions:commissions_create' %}"><button>New Commission</button></a>
+                </div>
+            {% endif %}
+        </header>
+        <main>
+            {% if user.is_authenticated %}
+                <section class="user-commissions">
+                    <h2>Your Commissions</h2>
+                    <ul>
+                        {% for commission in user_commissions %}
+                            <li>
+                                <a href="{{ commission.get_absolute_url }}">{{ commission.title }}</a>
+                                <small>(Status: {{ commission.status }}, Created: {{ commission.created_on|date:"Y-m-d H:i" }})</small>
+                            </li>
+                        {% empty %}
+                            <li>You haven't created any commissions.</li>
+                        {% endfor %}
+                    </ul>
+                </section>
+                <section class="applied-commissions">
+                    <h2>Applied Commissions</h2>
+                    <ul>
+                        {% for commission in applied_commissions %}
+                            <li>
+                                <a href="{{ commission.get_absolute_url }}">{{ commission.title }}</a>
+                                <small>(Status: {{ commission.status }}, Created: {{ commission.created_on|date:"Y-m-d H:i" }})</small>
+                            </li>
+                        {% empty %}
+                            <li>You haven't applied to any jobs yet.</li>
+                        {% endfor %}
+                    </ul>
+                </section>
+            {% endif %}
+            
+            <section class="all-commissions">
+                <h2>All Commissions</h2>
+                <ul>
+                    {% for commission in commissions %}
+                        <li>
+                            <a href="{{ commission.get_absolute_url }}">{{ commission.title }}</a>
+                            <small>(Status: {{ commission.status }}, Created: {{ commission.created_on|date:"Y-m-d H:i" }})</small>
+                        </li>
+                    {% empty %}
+                        <li>No commissions available.</li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </main>
+    </div>
 {% endblock %}

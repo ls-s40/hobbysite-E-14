@@ -4,23 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
-    {% block styles %} {% endblock %}
+    {% block styles %}
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 1em;
+        }
+        .profile-info {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .profile-field {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        .button-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        footer {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+    </style>
+    {% endblock %}
 </head>
 {% block content %}
-    <h1>User Profile</h1>
-    {% if is_editing %}
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" name="save">Save</button>
-            <a href="{% url 'user_management:profile_update' username=profile.user.username %}"><button type="button">Cancel</button></a>
-        </form>
-    {% else %}
-        <p><strong>Display Name:</strong> {{ profile.display_name }}</p>
-        <p><strong>Email:</strong> {{ profile.email }}</p>
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" name="edit">Edit Profile</button>
-        </form>
-    {% endif %}
+    <div class="container">
+        <h1>User Profile</h1>
+        
+        {% if is_editing %}
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="button-row">
+                    <button type="submit" name="save">Save Changes</button>
+                    <a href="{% url 'user_management:profile_update' username=profile.user.username %}">
+                        <button type="button" style="background-color: #6c757d;">Cancel</button>
+                    </a>
+                </div>
+            </form>
+        {% else %}
+            <div class="profile-info">
+                <div class="profile-field">
+                    <strong>Display Name:</strong> {{ profile.display_name }}
+                </div>
+                <div class="profile-field">
+                    <strong>Email:</strong> {{ profile.email }}
+                </div>
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="edit">Edit Profile</button>
+            </form>
+        {% endif %}
+        
+        <footer>
+            <a href="/">
+                <button type="button" style="background-color: #6c757d;">Back to Home</button>
+            </a>
+        </footer>
+    </div>
 {% endblock %}

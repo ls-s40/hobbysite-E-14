@@ -4,48 +4,109 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ commission.title }}</title>
-    {% block styles %} {% endblock %}
+    {% block styles %}
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 0.2em;
+        }
+        h2 {
+            font-size: 1.5em;
+            color: #444;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 20px;
+        }
+        .commission-meta {
+            font-size: 0.8em;
+            color: #444;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .description {
+            line-height: 1.6;
+            margin: 20px 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .jobs {
+            margin-top: 40px;
+        }
+        .job-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+    </style>
+    {% endblock %}
 </head>
 {% block content %}
-    <h1>{{ commission.title }}</h1>
-    <p><strong>Status:</strong> {{ commission.status }}</p>
-    <p><strong>Description:</strong> {{ commission.description }}</p>
-    <p><strong>Author:</strong> {{ commission.author }}</p>
-    <p><strong>Created On:</strong> {{ commission.created_on }}</p>
-    <p><strong>Last Updated:</strong> {{ commission.updated_on }}</p>
+    <div class="container">
+        <header>
+            <h1>{{ commission.title }}</h1>
+            <div class="commission-meta">
+                <p><strong>Status:</strong> {{ commission.status }}</p>
+                <p><strong>Author:</strong> {{ commission.author }}</p>
+                <p><strong>Created On:</strong> {{ commission.created_on|date:"Y-m-d H:i" }}</p>
+                <p><strong>Last Updated:</strong> {{ commission.updated_on|date:"Y-m-d H:i" }}</p>
+            </div>
+        </header>
+        
+        <main>
+            <div class="description">
+                <p>{{ commission.description|linebreaks }}</p>
+            </div>
 
-    <hr>
-    <h2>Jobs</h2>
-    <ul>
-        {% for job in jobs %}
-            <li>
-                <strong>{{ job.role }}</strong><br>
-                Manpower Required: {{ job.manpower_required }}<br>
-                Slots Left: {{ job.slots }}<br>
+            <section class="jobs">
+                <h2>Available Jobs</h2>
+                <ul>
+                    {% for job in jobs %}
+                        <li class="job-item">
+                            <h3>{{ job.role }}</h3>
+                            <p>Manpower Required: {{ job.manpower_required }}</p>
+                            <p>Slots Left: {{ job.slots }}</p>
 
-                {% if user.is_authenticated %}
-                    {% if job.status == 'Full' %}
-                        <button disabled>Full</button>
-                    {% else %}
-                        <form method="post" action="{% url 'commissions:commissions_detail' commission.pk %}">
-                            {% csrf_token %}
-                            <input type="hidden" name="job_id" value="{{ job.id }}">
-                            <button type="submit">Apply to Job</button>
-                        </form>
-                    {% endif %}
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
-    
-    <p><strong>Manpower Required:</strong> {{ total_manpower }}</p>
-    <p><strong>Open Manpower:</strong> {{ open_manpower }}</p>
+                            {% if user.is_authenticated %}
+                                {% if job.status == 'Full' %}
+                                    <button disabled>Full</button>
+                                {% else %}
+                                    <form method="post" action="{% url 'commissions:commissions_detail' commission.pk %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="job_id" value="{{ job.id }}">
+                                        <button type="submit">Apply to Job</button>
+                                    </form>
+                                {% endif %}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="manpower-summary">
+                    <p><strong>Total Manpower Required:</strong> {{ total_manpower }}</p>
+                    <p><strong>Open Manpower:</strong> {{ open_manpower }}</p>
+                </div>
+            </section>
 
-    {% if user == commission.author.user %}
-        <a href="{% url 'commissions:commissions_update' commission.id %}">Edit Commission</a>
-    {% endif %}
-<hr>
-<a href="{% url 'commissions:index' %}">
-    <button type="button">Back to List</button>
-</a>
+            {% if user == commission.author.user %}
+                <div style="margin-top: 20px;">
+                    <a href="{% url 'commissions:commissions_update' commission.id %}">
+                        <button type="button">Edit Commission</button>
+                    </a>
+                </div>
+            {% endif %}
+        </main>
+        <footer style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+            <a href="{% url 'commissions:index' %}">
+                <button type="button">Back to Commissions List</button>
+            </a>
+        </footer>
+    </div>
 {% endblock %}

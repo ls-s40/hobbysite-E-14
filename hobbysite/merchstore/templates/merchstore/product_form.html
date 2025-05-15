@@ -1,14 +1,79 @@
 {% extends 'base.html' %}
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if object %}Edit Product{% else %}Create New Product{% endif %}</title>
+    {% block styles %}
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 1em;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #ffc107;
+            color: black;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #e0a800;
+        }
+        footer {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+    </style>
+    {% endblock %}
+</head>
+
 {% block content %}
-    <h2>{% if object %}Edit Product{% else %}Create New Product{% endif %}</h2>
+<div class="container">
+    <h1>{% if object %}Edit Product{% else %}Create New Product{% endif %}</h1>
 
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
 
-        <button type="submit">{% if object %}Update{% else %}Create New Product{% endif %}</button>
+        <div class="button-row" style="margin-top: 20px;">
+            <button type="submit">{% if object %}Update{% else %}Create New Product{% endif %}</button>
+            <a href="{% url 'merchstore:index' %}">
+                <button type="button" style="background-color: #6c757d; color: white;">Cancel</button>
+            </a>
+        </div>
     </form>
 
-    <p><a href="{% url 'merchstore:index' %}">Back to Product List</a></p>
+    <footer>
+        <a href="{% url 'merchstore:index' %}">
+            <button type="button" style="background-color: #6c757d; color: white;">Back to Product List</button>
+        </a>
+    </footer>
+</div>
 {% endblock %}

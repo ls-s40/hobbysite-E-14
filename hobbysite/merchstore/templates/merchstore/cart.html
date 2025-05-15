@@ -1,7 +1,73 @@
 {% extends 'base.html' %}
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    {% block styles %}
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+        }
+        h2 {
+            color: #444;
+            font-size: 1.8em;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #444;
+            font-size: 1.3em;
+            margin-top: 20px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #ffc107;
+            color: black;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #e0a800;
+        }
+        .empty-cart {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+        }
+        footer {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+    </style>
+    {% endblock %}
+</head>
+
 {% block content %}
-    <h2>Cart</h2>
+<div class="container">
+    <h1>Shopping Cart</h1>
 
     {% if grouped_transactions %}
         {% for owner, transactions in grouped_transactions.items %}
@@ -15,8 +81,15 @@
             </ul>
         {% endfor %}
     {% else %}
-        <p>You have no transactions in your cart.</p>
+        <div class="empty-cart">
+            <p>Your cart is empty.</p>
+        </div>
     {% endif %}
 
-    <a href="{% url 'merchstore:index' %}">Back to product list</a>
+    <footer>
+        <a href="{% url 'merchstore:index' %}">
+            <button type="button" style="background-color: #6c757d; color: white;">Back to Product List</button>
+        </a>
+    </footer>
+</div>
 {% endblock %}

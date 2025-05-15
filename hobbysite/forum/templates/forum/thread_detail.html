@@ -1,93 +1,120 @@
 {% extends "base.html" %}
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ thread.title }}</title>
     {% block styles %}
     <style>
-        table {
-            width: 50%;
-            border-collapse: collapse;
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-
-        th, td {
-            border: 1px solid black;
-            padding: 10px;
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 0.2em;
+        }
+        h2 {
+            font-size: 0.8em;
+            color: #444;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        h3 {
+            font-size: 1.5em;
+            color: #444;
+            border-top: 2px solid #ddd;
+            padding-top: 10px;
+            margin-top: 30px;
+        }
+        .entry {
+            line-height: 1.6;
+            margin: 20px 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .comments {
+            margin-top: 40px;
+        }
+        .related-threads {
+            margin-top: 40px;
         }
     </style>
     {% endblock %}
 </head>
 
 {% block content %}
-    <h1>{{ thread.title }}</h1>
-    <p><strong>Author:</strong> {{ thread.author.user.username }}</p>
-    <p><strong>Category:</strong> {{ thread.category.name }}</p>
-    <p><strong>Created on:</strong> {{ thread.created_on|date:"F j, Y, g:i a" }}</p>
-    <p><strong>Last updated:</strong> {{ thread.updated_on|date:"F j, Y, g:i a" }}</p>
-
-    <div>
-        <br>
-        <p>{{ thread.entry|linebreaks }}</p>
-        <br>
-        {% if thread.image %}
-        <img src="{{ thread.image.url }}" alt="{{ thread.title }}" style="max-width: 200px; height: auto;">
-        {% endif %}
-        <br>
-    </div>
-
-    
-
-    <h3>Comments</h3>
-
-    <div>
-        <h5>Add a Comment:</h5>
-            {% if request.user.is_authenticated %}
-                <h3>Add a Comment</h3>
-                <form method="post">
-                    {% csrf_token %}
-                    <textarea name="entry" rows="4" cols="50" placeholder="Write your comment here..." required></textarea><br>
-                    <button type="submit">Submit</button>
-                </form>
-            {% else %}
-                <p><a href="{% url 'login' %}">Log in</a> to leave a comment.</p>
+<div class="container">
+    <header>
+        <h1>{{ thread.title }}</h1>
+        <h2>
+            Author: {{ thread.author.user.username }} <br>
+            Category: {{ thread.category.name }} <br>
+            Last updated: {{ thread.updated_on|date:"Y-m-d H:i" }}
+        </h2>
+    </header>
+    <main>
+        <div class="entry">
+            {{ thread.entry|linebreaks }}
+            {% if thread.image %}
+            <img src="{{ thread.image.url }}" alt="{{ thread.title }}" style="max-width: 100%; height: auto; margin: 20px 0;">
             {% endif %}
-        <br>
         </div>
+        <h3>
+            Created on: {{ thread.created_on|date:"Y-m-d H:i" }}
+        </h3>
 
-    <div>
-    {% if comments %}
-    <ul>
-        {% for comment in comments %}
-        <li>
-            <strong>{{ comment.author.display_name|default:comment.author.user.username }}</strong>
-            <i>{{ comment.created_on|date:"F j, Y, g:i a" }}</i><br>
-            {{ comment.entry|linebreaks }}
-        </li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <p>No comments yet.</p>
-    {% endif %}
-    </div>
+        {% if request.user.is_authenticated and thread.author.user == request.user %}
+            <a href="{% url 'forum:edit_thread' thread.id %}">Edit Thread</a>
+        {% endif %}
+    </main>
 
-
-    <div>
     {% if other_threads %}
-    <h3>Related Threads:</h3>
-    <ul>
-        {% for thread in other_threads %}
-        <li><a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a></li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <p>No related threads found.</p>
-    {% endif %}
-    <br>
-    </div>
-
-    {% if request.user.is_authenticated and thread.author.user == request.user %}
-    <a href="{% url 'forum:edit_thread' thread.id %}">Edit Thread</a>
+    <section class="related-threads">
+        <h2>Related Threads</h2>
+        <ul>
+            {% for thread in other_threads %}
+            <li><a href="{{ thread.get_absolute_url }}">{{ thread.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </section>
     {% endif %}
 
+    <section class="comments">
+        <h2>Comments</h2>
+        
+        <ul>
+            {% for comment in comments %}
+            <li>
+                <strong>{{ comment.author.display_name|default:comment.author.user.username }}:</strong> 
+                {{ comment.entry|linebreaks }}
+                <br><small>{{ comment.created_on|date:"Y-m-d H:i" }}</small>
+            </li>
+            {% endfor %}
+        </ul>
+        {% if not comments %}
+        <p>No comments yet.</p>
+        {% endif %}
+        
+        {% if request.user.is_authenticated %}
+            <h3>Leave a Comment</h3>
+            <form method="post">
+                {% csrf_token %}
+                <textarea name="entry" rows="4" cols="50" placeholder="Write your comment here..." required></textarea><br>
+                <button type="submit">Submit</button>
+            </form>
+        {% else %}
+            <p><a href="{% url 'login' %}">Log in</a> to leave a comment.</p>
+        {% endif %}
+    </section>
 
-    <p><a href="{% url 'forum:index' %}">Back to Threads</a></p>
-
+    <footer>
+        <p>
+            <a href="{% url 'forum:index' %}">Return to Forum Threads</a>
+        </p>
+    </footer>
+</div>
 {% endblock %}
